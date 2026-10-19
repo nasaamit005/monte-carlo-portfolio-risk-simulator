@@ -117,182 +117,77 @@ monte-carlo-portfolio-risk-simulator/
 
 *This structure represents the expected project layout. Keep only files that actually exist in your repository, and update the listing if your filenames differ.*
 
-## Key Financial Formulas
-
-The following formulas describe the main financial and statistical concepts used in the simulator. Verify their implementation against the current Python source code before making claims about exact calculation behavior.
-
-### 1. Daily Log Return
-
-Daily log return measures the continuously compounded price change between consecutive observations.
-
+Key Financial Formulas
+1. Daily Log Return
 \[
 r_{i,t}=\ln\left(\frac{P_{i,t}}{P_{i,t-1}}\right)
 \]
 
-Where:
-
-| Symbol | Name | Description |
-|---|---|---|
-| \(r_{i,t}\) | Log return | Log return of asset \(i\) on day \(t\) |
-| \(P_{i,t}\) | Current price | Adjusted closing price on day \(t\) |
-| \(P_{i,t-1}\) | Previous price | Adjusted closing price on the previous trading day |
-| \(\ln\) | Natural logarithm | Logarithm to base \(e\) |
-
-### 2. Multivariate Return Simulation
-
-The simulator models correlated asset log returns using a multivariate normal distribution.
-
+2. Multivariate Return Simulation
 \[
 \mathbf{r}_t\sim\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma})
 \]
 
-Where:
-
-| Symbol | Name | Description |
-|---|---|---|
-| \(\mathbf{r}_t\) | Return vector | Simulated log returns for all portfolio assets on day \(t\) |
-| \(\mathcal{N}\) | Normal distribution | Multivariate normal probability distribution |
-| \(\boldsymbol{\mu}\) | Mean vector | Historical mean log return for each asset |
-| \(\boldsymbol{\Sigma}\) | Covariance matrix | Variances and covariances describing asset-return behavior |
-
-The covariance matrix helps preserve estimated relationships between assets during each simulated day.
-
-### 3. Conversion from Log Return to Simple Return
-
+3. Conversion from Log Return to Simple Return
 \[
 R_{i,t}=e^{r_{i,t}}-1
 \]
 
-Where:
-
-| Symbol | Name | Description |
-|---|---|---|
-| \(R_{i,t}\) | Simple return | Percentage return of asset \(i\) on day \(t\) |
-| \(r_{i,t}\) | Log return | Simulated log return |
-| \(e\) | Euler's number | Mathematical constant approximately equal to 2.71828 |
-
-### 4. Equal-Weighted Portfolio Return
-
+4. Equal-Weighted Portfolio Return
+General portfolio return:
 \[
 R_{p,t}=\sum_{i=1}^{N}w_iR_{i,t}
 \]
 
-For an equal-weighted portfolio:
-
+Equal weight for each asset:
 \[
 w_i=\frac{1}{N}
 \]
 
-Therefore:
-
+Equal-weighted portfolio return:
 \[
 R_{p,t}=\frac{1}{N}\sum_{i=1}^{N}R_{i,t}
 \]
 
-Where:
-
-| Symbol | Name | Description |
-|---|---|---|
-| \(R_{p,t}\) | Portfolio return | Portfolio return on day \(t\) |
-| \(N\) | Number of assets | Number of stocks in the portfolio |
-| \(w_i\) | Portfolio weight | Proportion invested in asset \(i\) |
-| \(R_{i,t}\) | Asset return | Simple return of asset \(i\) on day \(t\) |
-| \(\sum\) | Summation | Adds the weighted returns across assets |
-
-### 5. Portfolio Value Evolution
-
-The portfolio value is calculated by compounding daily portfolio returns.
-
+5. Portfolio Value Evolution
 \[
 V_t=V_0\prod_{k=1}^{t}(1+R_{p,k})
 \]
 
-Where:
-
-| Symbol | Name | Description |
-|---|---|---|
-| \(V_t\) | Portfolio value | Portfolio value at time \(t\) |
-| \(V_0\) | Initial investment | Starting portfolio value |
-| \(R_{p,k}\) | Portfolio return | Portfolio return during period \(k\) |
-| \(\prod\) | Product operator | Multiplies growth factors over the investment horizon |
-| \(t\) | Time index | Current simulated trading day |
-
-### 6. Terminal Portfolio Return
-
+6. Terminal Portfolio Return
 \[
 R_p=\frac{V_T}{V_0}-1
 \]
 
-Where:
-
-| Symbol | Name | Description |
-|---|---|---|
-| \(R_p\) | Terminal return | Total portfolio return over the simulation |
-| \(V_T\) | Terminal value | Portfolio value at the end of the simulation |
-| \(V_0\) | Initial value | Portfolio value at the beginning |
-| \(T\) | Investment horizon | Final simulated time period |
-
-### 7. Value at Risk (VaR)
-
-Value at Risk estimates a loss threshold at a specified confidence level.
-
+7. Value at Risk (VaR)
 \[
 \operatorname{VaR}_c=-V_0Q_{1-c}(R_p)
 \]
 
-Where:
-
-| Symbol | Name | Description |
-|---|---|---|
-| \(\operatorname{VaR}_c\) | Value at Risk | Estimated loss threshold at confidence level \(c\) |
-| \(c\) | Confidence level | For example, 0.95 for 95% confidence |
-| \(Q_{1-c}(R_p)\) | Lower-tail quantile | Return quantile corresponding to probability \(1-c\) |
-| \(V_0\) | Initial value | Initial portfolio investment |
-| \(R_p\) | Terminal return | Simulated terminal portfolio return |
-
-For example, 95% VaR estimates a loss threshold associated with the lower 5% tail of simulated portfolio returns. Under this convention, VaR is expressed as a positive loss amount when the selected quantile is negative.
-
-### 8. Expected Shortfall (ES)
-
-Expected Shortfall estimates the average loss within the worst tail of simulated returns.
-
+At a 95% confidence level:
 \[
-\operatorname{ES}_c
-=-V_0\mathbb{E}\left[R_p\mid R_p\leq Q_{1-c}(R_p)\right]
+\operatorname{VaR}_{0.95}=-V_0Q_{0.05}(R_p)
 \]
 
-Where:
-
-| Symbol | Name | Description |
-|---|---|---|
-| \(\operatorname{ES}_c\) | Expected Shortfall | Average loss in the worst tail at confidence level \(c\) |
-| \(\mathbb{E}\) | Expected value | Conditional average of returns in the selected tail |
-| \(R_p\) | Terminal return | Simulated portfolio return |
-| \(Q_{1-c}(R_p)\) | Tail threshold | Lower-tail return quantile |
-| \(c\) | Confidence level | Risk confidence level, such as 95% or 99% |
-
-Expected Shortfall provides information about the severity of losses beyond the VaR threshold.
-
-### 9. Probability of Loss
-
+8. Expected Shortfall (ES)
 \[
-\Pr(V_T<V_0)=
-\frac{1}{M}\sum_{j=1}^{M}
-\mathbf{1}\left(V_T^{(j)}<V_0\right)
+\operatorname{ES}_c=-V_0\mathbb{E}\left[R_p\mid R_p\leq Q_{1-c}(R_p)\right]
 \]
 
-Where:
+At a 95% confidence level:
+\[
+\operatorname{ES}_{0.95}=-V_0\mathbb{E}\left[R_p\mid R_p\leq Q_{0.05}(R_p)\right]
+\]
 
-| Symbol | Name | Description |
-|---|---|---|
-| \(\Pr\) | Probability | Estimated probability of an event |
-| \(M\) | Number of simulations | Total Monte Carlo simulation paths |
-| \(V_T^{(j)}\) | Simulated terminal value | Terminal portfolio value in simulation \(j\) |
-| \(V_0\) | Initial investment | Starting portfolio value |
-| \(\mathbf{1}(\cdot)\) | Indicator function | Equals 1 when the condition is true and 0 otherwise |
-| \(\sum\) | Summation | Counts the simulations ending below the initial investment |
+9. Probability of Loss
+\[
+\Pr(V_T<V_0)=\frac{1}{M}\sum_{j=1}^{M}\mathbf{1}\left(V_T^{(j)}<V_0\right)
+\]
 
-The estimated probability is the fraction of simulated terminal values below the starting portfolio value.
+Expressed as a percentage:
+\[
+\text{Probability of Loss (\%)}=\Pr(V_T<V_0)\times100
+\]
 
 ## Simulation Configuration
 
