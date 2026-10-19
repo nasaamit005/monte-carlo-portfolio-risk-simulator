@@ -343,6 +343,7 @@ At 95% confidence, Expected Shortfall considers the worst 5% of terminal-return 
 
 ---
 
+
 ## 9. Probability of Loss
 
 The probability of loss estimates the fraction of simulated scenarios in which the terminal portfolio value is below the initial investment.
@@ -350,31 +351,42 @@ The probability of loss estimates the fraction of simulated scenarios in which t
 **General formula**
 
 $$
-\boxed{\Pr(V_T<V_0)=\frac{1}{M}\sum_{j=1}^{M}\mathbf{1}\left(V_T^{(j)}<V_0\right)}
+P(\text{Loss}) = \frac{1}{M}\sum_{j=1}^{M} I(V_T^{(j)} < V_0)
 $$
 
 **Expressed as a percentage**
 
 $$
-\boxed{\text{Probability of Loss (\%)}=100\times\Pr(V_T<V_0)}
+\text{Probability of Loss (\%)} = 100 \times P(\text{Loss})
 $$
 
 ### Symbols and meanings
 
 | Symbol | Name | Meaning |
 |---|---|---|
-| $\Pr$ | Probability | Probability of the specified event. |
-| $V_T$ | Terminal portfolio value | Portfolio value at the end of the simulation. |
-| $V_0$ | Initial investment | Starting portfolio value. |
+| $P(\text{Loss})$ | Probability of loss | Fraction of simulations that end below the initial investment. |
 | $M$ | Number of simulations | Total number of Monte Carlo simulation paths. |
 | $j$ | Simulation index | Identifies an individual simulation path. |
-| $V_T^{(j)}$ | Simulated terminal value | Ending portfolio value in simulation $j$. |
-| $\mathbf{1}(\cdot)$ | Indicator function | Equals 1 when the condition is true and 0 otherwise. |
-| $\sum$ | Summation operator | Adds the indicator values across all simulations. |
-| $<$ | Less-than operator | Tests whether the terminal value is below the initial value. |
-| $\times 100$ | Percentage conversion | Converts a probability expressed as a decimal into a percentage. |
+| $V_T^{(j)}$ | Simulated terminal portfolio value | Portfolio value at the end of simulation $j$. |
+| $V_0$ | Initial investment | Starting monetary value of the portfolio. |
+| $I(\cdot)$ | Indicator function | Equals 1 if the condition is true and 0 otherwise. |
+| $<$ | Less-than operator | Tests whether the terminal value is below the initial investment. |
+| $\times 100$ | Percentage conversion | Converts the probability from a decimal into a percentage. |
 
-**Example:** If 1,500 out of 10,000 simulations finish below the initial investment:
+**Example**
+
+If 1,500 out of 10,000 simulations finish below the initial investment:
+
+$$
+P(\text{Loss}) = \frac{1500}{10000} = 0.15
+$$
+
+$$
+\text{Probability of Loss} = 0.15 \times 100 = 15\%
+$$
+
+This probability is an estimate based on the model assumptions and historical inputs. It is not a guarantee of future investment performance.
+
 
 $$
 \text{Probability of Loss}=\frac{1500}{10000}\times100=15\%
