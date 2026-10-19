@@ -1,75 +1,94 @@
 # Monte Carlo Portfolio Risk Simulator
 
-A Python-based quantitative finance project for simulating portfolio outcomes using Monte Carlo methods, estimating potential investment losses, calculating Value at Risk (VaR) and Expected Shortfall (ES), analyzing portfolio risk, and generating interactive Plotly dashboards.
+[![Python](https://img.shields.io/badge/Python-3.12%2B-blue)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/Tests-43%20passed-brightgreen)](#testing)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**GitHub Repository:** `monte-carlo-portfolio-risk-simulator`
+A Python-based portfolio risk analysis project that simulates possible future portfolio outcomes using Monte Carlo methods and compares a multivariate-normal return model with a GARCH(1,1) volatility model combined with joint residual bootstrap sampling.
 
-## 🌐 Interactive Reports
+**GitHub repository:** https://github.com/nasaamit005/monte-carlo-portfolio-risk-simulator
 
-**Interactive Monte Carlo Dashboard**
+> **Important:** Simulation results are scenario estimates, not predictions or guarantees. They depend on the selected assets, historical sample, assumptions, model specification, and random seed. This project is educational and is not investment advice.
 
-Explore portfolio outcome distributions, simulated investment paths, percentile fan charts, terminal-value scenarios, and downside risk metrics using interactive Plotly visualizations.
+---
 
-- [Open Monte Carlo Dashboard](reports/monte_carlo_dashboard.html)
-- [Open Monte Carlo Analysis Report](reports/monte_carlo_analysis_report.html)
-- [View Interactive Chart Files](reports/monte_carlo/charts/)
+## Contents
 
-These links work when the corresponding HTML files are included in the repository. For a publicly hosted website, publish the HTML reports using GitHub Pages or another static hosting service and replace these links with the resulting public URLs.
+- [Project Overview](#project-overview)
+- [Objectives and Business Questions](#objectives-and-business-questions)
+- [Assets and Data](#assets-and-data)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Methodology](#methodology)
+- [Mathematical Questions, Equations, and Symbol Meanings](#mathematical-questions-equations-and-symbol-meanings)
+- [Model Comparison Results](#model-comparison-results)
+- [Reports and Interactive Charts](#reports-and-interactive-charts)
+- [Installation and Execution](#installation-and-execution)
+- [Testing](#testing)
+- [Assumptions and Limitations](#assumptions-and-limitations)
+- [Future Improvements](#future-improvements)
+- [References](#references)
 
-## Project Objectives
+## Project Overview
 
-- Simulate thousands of possible portfolio outcomes over a defined investment horizon.
-- Estimate the distribution of future portfolio values.
-- Calculate the probability of losing money.
-- Measure downside risk using VaR and Expected Shortfall.
-- Analyze historical asset returns, volatility, and correlations.
-- Visualize portfolio uncertainty using interactive Plotly charts.
-- Build a reproducible Python workflow with automated tests.
-- Demonstrate quantitative analysis skills relevant to financial analytics and risk analysis.
+The Monte Carlo Portfolio Risk Simulator explores a range of plausible portfolio outcomes by generating simulated return paths from historical market data. It is designed to demonstrate financial data preparation, portfolio statistics, risk measurement, volatility modelling, simulation, testing, and reporting in a reproducible Python workflow.
 
-## Features
+The project includes two simulation approaches:
 
-- Historical stock-price data collection
-- Data validation and preprocessing
-- Daily log-return calculations
-- Historical mean-return and covariance estimation
-- Correlated multivariate Monte Carlo simulation
-- Equal-weighted portfolio modeling
-- Simulated portfolio growth paths
-- Terminal portfolio-value distribution analysis
-- Probability-of-loss estimation
-- 95% and 99% Value at Risk calculations
-- Expected Shortfall analysis
-- Interactive Plotly HTML charts
-- CSV-based simulation and risk reports
-- Reproducible simulations using a fixed random seed
-- Automated testing using pytest
+1. **Multivariate Normal Monte Carlo:** estimates a joint return distribution from historical returns and simulates correlated asset returns.
+2. **GARCH(1,1) + Joint Residual Bootstrap:** models time-varying volatility for each asset and resamples aligned standardized residual vectors to retain observed cross-asset residual dependence.
+
+The GARCH forecasting validation workflow separately evaluates one-step-ahead variance forecasts on a chronological holdout sample against an expanding historical-variance baseline using QLIKE loss.
+
+## Objectives and Business Questions
+
+The project is intended to help investigate questions such as:
+
+- What range of terminal portfolio values could arise under the model assumptions?
+- How frequently do simulated terminal values fall below the starting portfolio value?
+- What do the lower-tail outcomes suggest about downside exposure?
+- How do Value at Risk (VaR) and Expected Shortfall (ES) differ between simulation approaches?
+- How does allowing volatility to change over time affect the simulated distribution of outcomes?
+- Does GARCH produce better out-of-sample variance forecasts than a historical-variance baseline under QLIKE?
+- How can results be presented through interactive charts and reproducible reports?
+
+These are model-based analyses. A simulation cannot establish the probability of future market outcomes without assumptions about the relationship between historical data and the future.
+
+## Assets and Data
+
+The analysis has been configured for the following tickers:
+
+| Ticker | Asset |
+|---|---|
+| `AAPL` | Apple |
+| `AMZN` | Amazon |
+| `GOOGL` | Alphabet |
+| `MSFT` | Microsoft |
+| `NVDA` | NVIDIA |
+| `^GSPC` | S&P 500 benchmark |
+
+The five individual equities are the portfolio assets; `^GSPC` is used as a benchmark in the broader analysis. Check each script's configuration before changing the asset universe.
+
+The project contains a combined daily market-data file at `data/raw/all_tickers_daily.csv` and processed datasets under `data/processed/`. Data coverage and availability depend on the downloaded source data. Inspect the generated data and report metadata for the exact date range used by a particular run.
+
+### Data handling principles
+
+- Parse dates and sort observations chronologically.
+- Check for missing, non-finite, duplicated, or invalid price observations.
+- Align asset returns by date before estimating cross-asset relationships.
+- Use only training observations to fit forecasting-model parameters.
+- Keep the holdout period separate when evaluating out-of-sample forecasts.
 
 ## Technology Stack
 
-| Technology | Purpose |
-|---|---|
-| Python | Simulation and financial analysis |
-| NumPy | Numerical computation, random sampling, and covariance analysis |
-| pandas | Data processing and financial time series |
-| yfinance | Historical market-data retrieval |
-| Plotly | Interactive charts and dashboards |
-| pytest | Automated testing |
-| Git and GitHub | Version control and project publication |
+- **Python** for data processing, modelling, and automation.
+- **pandas / NumPy** for tabular data and numerical calculations.
+- **Plotly** for interactive charts.
+- **`arch`** for GARCH modelling.
+- **pytest** for automated tests.
+- **HTML, CSV, and Markdown** for shareable reports and exported results.
 
-## Assets Analyzed
-
-The portfolio includes five large-cap technology stocks:
-
-| Ticker | Company |
-|---|---|
-| AAPL | Apple |
-| AMZN | Amazon |
-| GOOGL | Alphabet |
-| MSFT | Microsoft |
-| NVDA | NVIDIA |
-
-The S&P 500 Index (`^GSPC`) is downloaded as a market benchmark for historical analysis. It is not one of the five equal-weighted portfolio stocks unless the source code is changed.
+The exact dependencies are listed in `requirements.txt`.
 
 ## Project Structure
 
@@ -79,564 +98,730 @@ monte-carlo-portfolio-risk-simulator/
 │   ├── raw/
 │   │   └── all_tickers_daily.csv
 │   └── processed/
-│       ├── prices_wide.csv
 │       ├── daily_returns.csv
 │       ├── performance_metrics.csv
-│       ├── stock_correlation.csv
-│       └── portfolio_daily_returns.csv
+│       ├── portfolio_daily_returns.csv
+│       ├── prices_wide.csv
+│       └── stock_correlation.csv
 ├── docs/
+│   ├── MONTE_CARLO_METHODOLOGY.md
+│   ├── MONTE_CARLO_METHODOLOGY.html
+│   ├── REFERENCES.md
+│   └── REFERENCES.html
 ├── reports/
-│   ├── monte_carlo_analysis_report.html
-│   ├── monte_carlo_dashboard.html
-│   └── monte_carlo/
+│   ├── garch_comparison/
+│   │   ├── charts/
+│   │   └── ...
+│   └── garch_validation/
 │       ├── charts/
-│       │   ├── terminal_value_distribution.html
-│       │   ├── sample_simulation_paths.html
-│       │   ├── portfolio_percentile_fan.html
-│       │   ├── var_es_comparison.html
-│       │   └── terminal_outcomes_scatter.html
-│       ├── simulation_summary.csv
-│       ├── simulated_var_es.csv
-│       ├── terminal_values.csv
-│       ├── sample_simulation_paths.csv
-│       ├── sample_simulated_daily_returns.csv
-│       ├── simulation_configuration.json
-│       └── monte_carlo_summary.md
+│       └── ...
 ├── src/
-│   ├── download_data.py
-│   ├── validate_data.py
+│   ├── monte_carlo_simulation.py
 │   ├── portfolio_analysis.py
-│   └── monte_carlo_simulation.py
+│   ├── garch_portfolio_simulation.py
+│   └── validate_garch_forecasts.py
 ├── tests/
-│   └── test_monte_carlo.py
+│   ├── test_monte_carlo.py
+│   ├── test_garch_comparison.py
+│   └── test_garch_validation.py
 ├── requirements.txt
-├── .gitignore
-├── LICENSE
 └── README.md
 ```
 
-*This structure represents the expected project layout. Keep only files that actually exist in your repository, and update the listing if your filenames differ.*
+The tree highlights core project components. Your local repository may contain additional scripts and generated artifacts.
 
+## Methodology
 
-# Key Financial Formulas
+### 1. Data preparation
 
-These equations describe the main mathematical and financial concepts used in the Monte Carlo Portfolio Risk Simulator. Each equation is followed by the definitions of its symbols.
+Load daily price observations, validate the date and price fields, sort them chronologically, and align the asset series. Returns are calculated from successive observations.
 
-## 1. Daily Log Return
+### 2. Historical analysis
 
-Daily log return measures the continuously compounded price change between consecutive trading days.
+Estimate asset return averages, volatilities, covariance, and correlation from historical returns. These statistics describe the sample; they are not guaranteed to remain stable.
 
-$$
-\boxed{
-r_{i,t}=\ln\left(\frac{P_{i,t}}{P_{i,t-1}}\right)
-}
-$$
+### 3. Multivariate Normal Monte Carlo
 
-**Symbols and meanings**
+The baseline model estimates a vector of mean returns and a covariance matrix from historical data. It then generates correlated multivariate-normal log-return observations and simulates portfolio paths.
 
-| Symbol | Name | Meaning |
-|---|---|---|
-| $r_{i,t}$ | Daily log return | Logarithmic return of asset $i$ on day $t$. |
-| $P_{i,t}$ | Current price | Adjusted closing price of asset $i$ on day $t$. |
-| $P_{i,t-1}$ | Previous price | Adjusted closing price of asset $i$ on the previous trading day. |
-| $\ln$ | Natural logarithm | Logarithm to base $e$. |
-| $i$ | Asset index | Identifies a stock in the portfolio. |
-| $t$ | Time index | Identifies a trading day. |
-| $e$ | Euler's number | Mathematical constant approximately equal to $2.71828$. |
+Default settings documented for the baseline workflow include:
 
-## 2. Multivariate Return Simulation
+- Simulations: **10,000**
+- Horizon: **252 trading days**
+- Initial portfolio value: **$10,000**
+- Portfolio allocation: **equal weights**
+- Random seed: **42**
 
-Correlated asset log returns are modeled using a multivariate normal probability distribution.
+Confirm the active configuration in the script or generated configuration metadata when reproducing a run.
 
-$$
-\boxed{
-\mathbf{r}_t\sim\mathcal{N}
-\left(\boldsymbol{\mu},\boldsymbol{\Sigma}\right)
-}
-$$
+### 4. GARCH(1,1) + joint residual bootstrap
 
-**Symbols and meanings**
+A GARCH(1,1) model estimates conditional volatility for each asset. Standardized residual vectors are resampled jointly by date, rather than independently asset by asset. This helps retain the cross-asset dependence present in the aligned residual observations.
 
-| Symbol | Name | Meaning |
-|---|---|---|
-| $\mathbf{r}_t$ | Return vector | Vector of simulated log returns for all assets on day $t$. |
-| $\mathcal{N}$ | Multivariate normal distribution | Probability distribution used to model the joint asset returns. |
-| $\boldsymbol{\mu}$ | Mean vector | Vector of estimated mean log returns for the assets. |
-| $\boldsymbol{\Sigma}$ | Covariance matrix | Matrix containing asset-return variances and covariances. |
-| $\sim$ | Distributed as | Indicates the probability distribution followed by a random variable. |
-| $\mathbf{r}$ | Vector notation | Bold notation indicates a vector of returns rather than one scalar return. |
+### 5. Out-of-sample volatility validation
 
-The covariance matrix represents estimated relationships between asset returns and helps preserve their dependence in simulated scenarios.
+The validation workflow uses a chronological split: the first 80% of observations for training and the final 20% for holdout evaluation, subject to minimum sample-size checks. It compares GARCH variance forecasts with an expanding historical-variance baseline using QLIKE.
 
-## 3. Conversion from Log Return to Simple Return
+The validation procedure fits model parameters on training data and forecasts one step ahead through the holdout. Realized squared returns are used as a proxy for latent variance. This is a noisy proxy, not a directly observed true volatility value.
 
-Simulated log returns are converted to simple returns before calculating weighted portfolio returns.
+### 6. Risk reporting
 
-$$
-\boxed{
-R_{i,t}=e^{r_{i,t}}-1
-}
-$$
-
-**Symbols and meanings**
-
-| Symbol | Name | Meaning |
-|---|---|---|
-| $R_{i,t}$ | Simple return | Percentage price change of asset $i$ on day $t$, expressed as a decimal. |
-| $r_{i,t}$ | Log return | Logarithmic return of asset $i$ on day $t$. |
-| $e$ | Euler's number | Mathematical constant approximately equal to $2.71828$. |
-| $i$ | Asset index | Identifies the asset. |
-| $t$ | Time index | Identifies the trading day. |
-
-For example, a simple return of $0.05$ represents a return of $5\%$.
-
-## 4. Equal-Weighted Portfolio Return
-
-The general portfolio return is the weighted sum of the individual asset returns.
-
-$$
-\boxed{
-R_{p,t}=\sum_{i=1}^{N}w_iR_{i,t}
-}
-$$
-
-For an equal-weighted portfolio, each asset receives the same weight.
-
-$$
-\boxed{
-w_i=\frac{1}{N}
-}
-$$
-
-Substituting the equal weights into the general formula gives:
-
-$$
-\boxed{
-R_{p,t}=\frac{1}{N}\sum_{i=1}^{N}R_{i,t}
-}
-$$
-
-**Symbols and meanings**
-
-| Symbol | Name | Meaning |
-|---|---|---|
-| $R_{p,t}$ | Portfolio return | Portfolio return on day $t$. |
-| $R_{i,t}$ | Asset return | Simple return of asset $i$ on day $t$. |
-| $w_i$ | Portfolio weight | Proportion of the portfolio allocated to asset $i$. |
-| $N$ | Number of assets | Total number of assets included in the portfolio. |
-| $\sum$ | Summation operator | Adds the indicated terms together. |
-| $i$ | Asset index | Identifies an individual asset. |
-| $p$ | Portfolio index | Identifies the portfolio rather than an individual asset. |
-| $t$ | Time index | Identifies the trading day. |
-
-Equal weighting means every asset has the same weight. Whether those weights remain constant or are rebalanced during each simulation depends on the implementation.
-
-## 5. Portfolio Value Evolution
-
-Portfolio value evolves by compounding the portfolio returns over successive periods.
-
-$$
-\boxed{
-V_t=V_0\prod_{k=1}^{t}(1+R_{p,k})
-}
-$$
-
-**Symbols and meanings**
-
-| Symbol | Name | Meaning |
-|---|---|---|
-| $V_t$ | Portfolio value | Portfolio value at time $t$. |
-| $V_0$ | Initial investment | Portfolio value at the beginning of the simulation. |
-| $R_{p,k}$ | Portfolio return | Portfolio return during period $k$. |
-| $\prod$ | Product operator | Multiplies the growth factors across all specified periods. |
-| $k$ | Period index | Identifies an individual period in the compounding process. |
-| $t$ | Time index | Current simulated period. |
-
-Each growth factor, $1+R_{p,k}$, represents the change in portfolio value during one period.
-
-## 6. Terminal Portfolio Return
-
-Terminal return measures the total gain or loss relative to the initial investment at the end of the simulation.
-
-$$
-\boxed{
-R_p=\frac{V_T}{V_0}-1
-}
-$$
-
-**Symbols and meanings**
-
-| Symbol | Name | Meaning |
-|---|---|---|
-| $R_p$ | Terminal portfolio return | Total portfolio return over the simulation horizon. |
-| $V_T$ | Terminal portfolio value | Portfolio value at the end of the simulation. |
-| $V_0$ | Initial portfolio value | Portfolio value at the beginning of the simulation. |
-| $T$ | Final time index | Last period of the simulation. |
-| $p$ | Portfolio index | Identifies the portfolio. |
-
-A positive terminal return represents a gain, while a negative terminal return represents a loss.
-
-
-## 7. Value at Risk (VaR)
-
-Value at Risk estimates a monetary loss threshold at a specified confidence level.
-
-**General formula**
-
-$$
-\boxed{\mathrm{VaR}_c=-V_0 Q_{1-c}(R_p)}
-$$
-
-**At a 95% confidence level**
-
-$$
-\boxed{\mathrm{VaR}_{0.95}=-V_0 Q_{0.05}(R_p)}
-$$
-
-### Symbols and meanings
-
-| Symbol | Name | Meaning |
-|---|---|---|
-| $\mathrm{VaR}_c$ | Value at Risk | Estimated monetary loss threshold at confidence level $c$. |
-| $c$ | Confidence level | Risk confidence level, such as $0.95$ for 95%. |
-| $V_0$ | Initial investment | Starting monetary value of the portfolio. |
-| $R_p$ | Terminal portfolio return | Simulated total portfolio return over the investment horizon. |
-| $Q_{1-c}(R_p)$ | Lower-tail quantile | Return threshold at probability $1-c$. |
-| $Q$ | Quantile function | Identifies a specified percentile of a return distribution. |
-
-At 95% confidence, the formula uses the 5th percentile of terminal returns. If this quantile is negative, VaR is expressed as a positive monetary loss threshold.
-
-VaR is a model-based estimate, not a guarantee that losses will remain below the stated amount.
+The reports compare terminal portfolio values and downside risk statistics. Risk measures are sensitive to the loss definition, confidence level, simulation horizon, and quantile convention. Always read the corresponding report before interpreting a number.
 
 ---
 
-## 8. Expected Shortfall (ES)
+## Mathematical Questions, Equations, and Symbol Meanings
 
-Expected Shortfall estimates the average monetary loss among the worst outcomes in the selected lower tail of the return distribution.
+This section presents common questions relevant to portfolio analysis, Monte Carlo simulation, and GARCH validation. Each equation is followed by definitions of its symbols and an interpretation. Some equations are general financial reference formulas; whether a particular metric is calculated by a script depends on that script's implementation.
 
-**General formula**
+### Question 1. How is daily log return calculated?
 
-$$
-\boxed{\mathrm{ES}_c=-V_0\,\mathbb{E}\left[R_p\mid R_p\leq Q_{1-c}(R_p)\right]}
-$$
+**Equation**
 
-**At a 95% confidence level**
+\[
+r_t = \ln\left(\frac{P_t}{P_{t-1}}\right)
+\]
 
-$$
-\boxed{\mathrm{ES}_{0.95}=-V_0\,\mathbb{E}\left[R_p\mid R_p\leq Q_{0.05}(R_p)\right]}
-$$
+**Symbols**
 
-### Symbols and meanings
-
-| Symbol | Name | Meaning |
-|---|---|---|
-| $\mathrm{ES}_c$ | Expected Shortfall | Average monetary loss in the selected worst-return tail. |
-| $c$ | Confidence level | Risk confidence level, such as $0.95$ for 95%. |
-| $V_0$ | Initial investment | Initial monetary value of the portfolio. |
-| $R_p$ | Terminal portfolio return | Simulated total portfolio return. |
-| $\mathbb{E}$ | Expected value operator | Calculates the average of values under the specified condition. |
-| $\mid$ | Conditional operator | Means the calculation applies only when the stated condition holds. |
-| $Q_{1-c}(R_p)$ | Lower-tail quantile | Return threshold defining the worst $1-c$ fraction of outcomes. |
-| $\leq$ | Less-than-or-equal-to operator | Selects returns at or below the threshold. |
-
-At 95% confidence, Expected Shortfall considers the worst 5% of terminal-return outcomes. Under this convention, a negative average return in that tail produces a positive monetary loss estimate.
-
----
-
-
-## 9. Probability of Loss
-
-The probability of loss estimates the fraction of simulated scenarios in which the terminal portfolio value is below the initial investment.
-
-**General formula**
-
-$$
-P(\text{Loss}) = \frac{1}{M}\sum_{j=1}^{M} I(V_T^{(j)} < V_0)
-$$
-
-**Expressed as a percentage**
-
-$$
-\text{Probability of Loss (\%)} = 100 \times P(\text{Loss})
-$$
-
-### Symbols and meanings
-
-| Symbol | Name | Meaning |
-|---|---|---|
-| $P(\text{Loss})$ | Probability of loss | Fraction of simulations that end below the initial investment. |
-| $M$ | Number of simulations | Total number of Monte Carlo simulation paths. |
-| $j$ | Simulation index | Identifies an individual simulation path. |
-| $V_T^{(j)}$ | Simulated terminal portfolio value | Portfolio value at the end of simulation $j$. |
-| $V_0$ | Initial investment | Starting monetary value of the portfolio. |
-| $I(\cdot)$ | Indicator function | Equals 1 if the condition is true and 0 otherwise. |
-| $<$ | Less-than operator | Tests whether the terminal value is below the initial investment. |
-| $\times 100$ | Percentage conversion | Converts the probability from a decimal into a percentage. |
-
-**Example**
-
-If 1,500 out of 10,000 simulations finish below the initial investment:
-
-$$
-P(\text{Loss}) = \frac{1500}{10000} = 0.15
-$$
-
-$$
-\text{Probability of Loss} = 0.15 \times 100 = 15\%
-$$
-
-This probability is an estimate based on the model assumptions and historical inputs. It is not a guarantee of future investment performance.
-
-
-$$
-\text{Probability of Loss}=\frac{1500}{10000}\times100=15\%
-$$
-
-This probability is an estimate based on the model assumptions and historical inputs. It is not a guarantee of future investment performance.
-
----
-
-**Implementation note:** These equations describe the intended mathematical framework. Verify the current Python implementation before claiming that each equation exactly matches the code, particularly the portfolio rebalancing method and the calculations used for VaR and Expected Shortfall.
-
-
-
-## Simulation Configuration
-
-The current configuration used in an earlier simulation run was:
-
-| Parameter | Value |
-|---|---:|
-| Number of simulations | 10,000 |
-| Investment horizon | 252 trading days |
-| Initial portfolio value | $10,000 |
-| Portfolio allocation | Equal-weighted |
-| Random seed | 42 |
-| Annual trading-day convention | 252 days |
-
-These are configurable settings, not guarantees. Check the current source code and `simulation_configuration.json` to confirm the settings used in your latest run.
-
-## Example Monte Carlo Results
-
-An earlier simulation produced the following results:
-
-| Metric | Result |
-|---|---:|
-| Mean terminal portfolio value | $13,972.82 |
-| Median terminal portfolio value | $13,440.80 |
-| 5th percentile terminal value | $8,547.09 |
-| 95th percentile terminal value | $21,181.09 |
-| Probability of loss | 14.45% |
-| 95% VaR | $1,452.91 |
-| 95% Expected Shortfall | $2,323.95 |
-| 99% VaR | $2,939.19 |
-| 99% Expected Shortfall | $3,466.75 |
-
-**Important:** These figures are from an earlier run. Rerun the simulator and verify the latest generated reports before presenting them as current results.
-
-## Interactive Dashboards
-
-The project generates interactive Plotly HTML visualizations for:
-
-| Chart or Report | Purpose |
+| Symbol | Meaning |
 |---|---|
-| Terminal value distribution | Explore the distribution of simulated ending portfolio values |
-| Sample simulation paths | Compare example portfolio trajectories |
-| Portfolio percentile fan | Visualize the range of simulated outcomes over time |
-| VaR and ES comparison | Compare downside risk measures at different confidence levels |
-| Terminal outcomes scatter | Explore individual simulated terminal outcomes |
-| Monte Carlo dashboard | Review selected simulation results in one place |
-| Monte Carlo analysis report | Review the broader analysis and methodology |
+| \(r_t\) | Log return at time \(t\), dimensionless |
+| \(P_t\) | Asset price at time \(t\) |
+| \(P_{t-1}\) | Asset price at the preceding observation |
+| \(\ln(\cdot)\) | Natural logarithm |
+| \(t\) | Current observation or time index |
 
-The individual charts are saved in `reports/monte_carlo/charts/`.
+**Interpretation:** Log return measures the continuously compounded change between two positive prices. It is useful for statistical modelling and is the return representation used by the simulation workflow.
 
-To open a chart, navigate to the relevant HTML file in VS Code Explorer and select **Reveal in File Explorer**, then open it in a web browser. The charts can also be opened directly from your local project directory.
+### Question 2. How is simple return calculated, and how is it related to log return?
 
-For a public live website, deploy the HTML reports to GitHub Pages or another static hosting service. Local file links are not public web links.
+**Equations**
 
-## Installation
+\[
+R_t = \frac{P_t-P_{t-1}}{P_{t-1}}
+\]
+
+\[
+r_t = \ln(1+R_t), \qquad R_t=e^{r_t}-1
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(R_t\) | Simple return over the period |
+| \(r_t\) | Log return over the period |
+| \(P_t\) | Current price |
+| \(P_{t-1}\) | Previous price |
+| \(e\) | Euler's number, the base of natural logarithms |
+
+**Interpretation:** A simple return of \(0.05\) represents a 5% increase. The log and simple returns are related but are not interchangeable in portfolio aggregation.
+
+### Question 3. How is the historical mean return calculated?
+
+**Equation**
+
+\[
+\bar r = \frac{1}{T}\sum_{t=1}^{T} r_t
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(\bar r\) | Sample mean return |
+| \(r_t\) | Return observed at time \(t\) |
+| \(T\) | Number of return observations |
+| \(\sum\) | Summation over the specified observations |
+| \(t\) | Observation index |
+
+**Interpretation:** The mean summarizes the average return per observation in the selected historical sample. It is not necessarily the expected return that will occur in the future.
+
+### Question 4. How are sample variance and standard deviation calculated?
+
+**Equations**
+
+\[
+s^2 = \frac{1}{T-1}\sum_{t=1}^{T}(r_t-\bar r)^2
+\]
+
+\[
+s = \sqrt{s^2}
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(s^2\) | Sample variance |
+| \(s\) | Sample standard deviation |
+| \(r_t\) | Return at observation \(t\) |
+| \(\bar r\) | Sample mean return |
+| \(T\) | Number of observations |
+| \(T-1\) | Degrees-of-freedom adjustment for sample variance |
+| \(\sqrt{\cdot}\) | Square-root operator |
+
+**Interpretation:** Variance measures dispersion in squared-return units; standard deviation expresses dispersion in return units. Daily volatility should not be confused with annualized volatility.
+
+### Question 5. How are covariance and correlation between two assets calculated?
+
+**Equations**
+
+\[
+\operatorname{Cov}(r_i,r_j)
+=
+\frac{1}{T-1}\sum_{t=1}^{T}
+(r_{i,t}-\bar r_i)(r_{j,t}-\bar r_j)
+\]
+
+\[
+\rho_{ij}
+=
+\frac{\operatorname{Cov}(r_i,r_j)}{s_i s_j}
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(\operatorname{Cov}(r_i,r_j)\) | Sample covariance between assets \(i\) and \(j\) |
+| \(\rho_{ij}\) | Correlation coefficient between assets \(i\) and \(j\) |
+| \(r_{i,t}\) | Return of asset \(i\) at time \(t\) |
+| \(r_{j,t}\) | Return of asset \(j\) at time \(t\) |
+| \(\bar r_i,\bar r_j\) | Sample mean returns for assets \(i\) and \(j\) |
+| \(s_i,s_j\) | Sample standard deviations for assets \(i\) and \(j\) |
+| \(i,j\) | Asset indices |
+| \(T\) | Number of aligned observations |
+
+**Interpretation:** Covariance captures how two return series move together in their original units. Correlation standardizes that relationship and lies between \(-1\) and \(+1\), when both series have nonzero variance.
+
+### Question 6. How is a portfolio's simple return calculated from asset simple returns?
+
+**Equation**
+
+\[
+R_{p,t} = \sum_{i=1}^{N} w_i R_{i,t}
+\]
+
+with
+
+\[
+\sum_{i=1}^{N}w_i=1
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(R_{p,t}\) | Portfolio simple return at time \(t\) |
+| \(R_{i,t}\) | Simple return of asset \(i\) at time \(t\) |
+| \(w_i\) | Portfolio weight assigned to asset \(i\) |
+| \(N\) | Number of assets in the portfolio |
+| \(\sum w_i=1\) | Fully invested portfolio-weight constraint |
+
+**Interpretation:** For a fully invested portfolio with weights maintained over the return period, the portfolio simple return is the weighted sum of asset simple returns. The relationship must be applied carefully when the simulated inputs are log returns.
+
+### Question 7. How is portfolio variance calculated from a covariance matrix?
+
+**Equations**
+
+\[
+\sigma_p^2 = \mathbf{w}^{\mathsf T}\boldsymbol{\Sigma}\mathbf{w}
+\]
+
+\[
+\sigma_p = \sqrt{\mathbf{w}^{\mathsf T}\boldsymbol{\Sigma}\mathbf{w}}
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(\sigma_p^2\) | Portfolio variance |
+| \(\sigma_p\) | Portfolio standard deviation |
+| \(\mathbf{w}\) | Column vector of portfolio weights |
+| \(\mathbf{w}^{\mathsf T}\) | Transpose of the weight vector |
+| \(\boldsymbol{\Sigma}\) | Asset-return covariance matrix |
+| \(N\) | Number of assets represented in the vector and matrix |
+
+**Interpretation:** Portfolio risk depends on asset weights and the full covariance matrix, not only on each asset's individual volatility. Covariance is the mathematical basis for modelling cross-asset dependence in the multivariate-normal simulation.
+
+### Question 8. What distribution does the multivariate-normal model assume for asset log returns?
+
+**Equation**
+
+\[
+\mathbf{r}_t \sim \mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma})
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(\mathbf{r}_t\) | Vector of asset log returns at time \(t\) |
+| \(\sim\) | “Is distributed according to” |
+| \(\mathcal{N}\) | Multivariate normal distribution |
+| \(\boldsymbol{\mu}\) | Vector of estimated mean log returns |
+| \(\boldsymbol{\Sigma}\) | Covariance matrix of log returns |
+| \(t\) | Simulated time index |
+
+**Interpretation:** This model represents dependence through a covariance matrix. Its standard form does not capture all features that can occur in financial returns, such as heavy tails, changing correlations, or volatility clustering.
+
+### Question 9. How is portfolio value updated when the simulated inputs are log returns and the portfolio is rebalanced to target weights?
+
+For a portfolio rebalanced to weights \(w_i\) at each period, the simple portfolio return implied by asset log returns is
+
+\[
+R_{p,t+1} = \sum_{i=1}^{N}w_i\left(e^{r_{i,t+1}}-1\right)
+\]
+
+and the corresponding value update is
+
+\[
+V_{t+1}
+=
+V_t\left[1+\sum_{i=1}^{N}w_i\left(e^{r_{i,t+1}}-1\right)\right].
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(V_t\) | Portfolio value at time \(t\) |
+| \(V_{t+1}\) | Portfolio value at the next period |
+| \(r_{i,t+1}\) | Simulated log return for asset \(i\) over the next period |
+| \(e^{r_{i,t+1}}-1\) | Simple return corresponding to the simulated log return |
+| \(w_i\) | Target portfolio weight for asset \(i\) |
+| \(N\) | Number of portfolio assets |
+
+**Interpretation:** This equation is appropriate for a daily-rebalanced portfolio with fixed target weights and no fees, taxes, cash flows, or market frictions. Verify the value-update expression in the specific simulation script before treating this as an exact description of its implementation.
+
+### Question 10. How is compound annual growth rate (CAGR) calculated?
+
+**Equation**
+
+\[
+\operatorname{CAGR}
+=
+\left(\frac{V_{\mathrm{end}}}{V_{\mathrm{start}}}\right)^{1/Y}-1
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(V_{\mathrm{end}}\) | Portfolio value at the end of the period |
+| \(V_{\mathrm{start}}\) | Portfolio value at the start of the period |
+| \(Y\) | Length of the period in years |
+| \(\operatorname{CAGR}\) | Compound annual growth rate |
+
+**Interpretation:** CAGR expresses the constant annual growth rate that connects the starting and ending values over the specified period. This is a reference formula; do not assume the Monte Carlo script reports CAGR unless the relevant output confirms it.
+
+### Question 11. How is annualized volatility estimated from daily volatility?
+
+**Equation**
+
+\[
+\sigma_{\mathrm{annual}}=\sigma_{\mathrm{daily}}\sqrt{D}
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(\sigma_{\mathrm{annual}}\) | Annualized standard deviation |
+| \(\sigma_{\mathrm{daily}}\) | Daily standard deviation |
+| \(D\) | Assumed number of trading days per year; commonly 252 |
+| \(\sqrt{D}\) | Square root of the annualization factor |
+
+**Interpretation:** This is a conventional annualization under assumptions about the return process. It is not a forecast that volatility will remain constant throughout the year.
+
+### Question 12. How is the Sharpe ratio calculated?
+
+**Equation**
+
+\[
+\operatorname{Sharpe}
+=
+\frac{\bar R_p-R_f}{s_p}
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(\bar R_p\) | Average portfolio return per period |
+| \(R_f\) | Risk-free return for the same period and in compatible units |
+| \(s_p\) | Standard deviation of portfolio returns for the same period |
+| \(\operatorname{Sharpe}\) | Return in excess of the risk-free rate per unit of return standard deviation |
+
+**Interpretation:** The Sharpe ratio compares excess return with variability. If the numerator uses daily returns and the denominator uses daily standard deviation, the result is a daily-period ratio; annualization requires consistent treatment of both quantities. This is a reference formula and should only be reported as a project result if it is calculated by the relevant script.
+
+### Question 13. What is Value at Risk (VaR)?
+
+Let \(L\) denote portfolio loss under a clearly specified loss convention. The loss quantile at confidence level \(\alpha\) is
+
+\[
+\operatorname{VaR}_{\alpha}(L)=F_L^{-1}(\alpha)
+\]
+
+where \(F_L\) is the cumulative distribution function of loss.
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(L\) | Portfolio loss, defined according to the report's convention |
+| \(\operatorname{VaR}_{\alpha}(L)\) | Loss quantile at confidence level \(\alpha\) |
+| \(\alpha\) | Quantile level, such as \(0.95\) or \(0.99\) |
+| \(F_L\) | Cumulative distribution function of loss |
+| \(F_L^{-1}\) | Quantile function, or inverse CDF under the chosen convention |
+
+**Interpretation:** At a 95% loss quantile, approximately 95% of modelled losses are at or below the VaR threshold, with approximately 5% above it, subject to ties and the quantile convention. VaR does not describe the average size of losses beyond the threshold. The report must state whether loss is defined relative to starting value, a benchmark, or another reference.
+
+### Question 14. What is Expected Shortfall (ES)?
+
+For a continuous loss distribution, Expected Shortfall at level \(\alpha\) can be written as
+
+\[
+\operatorname{ES}_{\alpha}(L)
+=
+\mathbb{E}\left[L\mid L\geq \operatorname{VaR}_{\alpha}(L)\right].
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(\operatorname{ES}_{\alpha}(L)\) | Expected Shortfall at level \(\alpha\) |
+| \(\mathbb{E}[\cdot]\) | Expected value or mean |
+| \(L\) | Portfolio loss |
+| \(\operatorname{VaR}_{\alpha}(L)\) | VaR threshold |
+| \(\alpha\) | Confidence level |
+| \(\mid\) | “Conditional on” |
+| \(\geq\) | Greater than or equal to |
+
+**Interpretation:** ES estimates the average loss in the tail beyond the VaR threshold. For finite Monte Carlo samples or discrete distributions, the exact empirical calculation depends on how tail observations and quantiles are selected; consult the implementation for its convention.
+
+### Question 15. What is a GARCH(1,1) model?
+
+**Equations**
+
+\[
+r_t=\mu+\varepsilon_t
+\]
+
+\[
+\varepsilon_t=\sigma_t z_t
+\]
+
+\[
+\sigma_t^2
+=
+\omega+\alpha_1\varepsilon_{t-1}^2+\beta_1\sigma_{t-1}^2
+\]
+
+A common sufficient parameter condition for a finite unconditional variance in the standard model is
+
+\[
+\omega>0,\qquad \alpha_1\geq 0,\qquad \beta_1\geq 0,\qquad
+\alpha_1+\beta_1<1.
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(r_t\) | Return at time \(t\) |
+| \(\mu\) | Conditional mean or mean parameter, according to the specification |
+| \(\varepsilon_t\) | Return innovation or residual at time \(t\) |
+| \(\sigma_t\) | Conditional standard deviation at time \(t\) |
+| \(\sigma_t^2\) | Conditional variance at time \(t\) |
+| \(z_t\) | Standardized innovation, commonly with mean zero and variance one |
+| \(\omega\) | Variance-equation constant |
+| \(\alpha_1\) | Coefficient on the previous squared innovation (ARCH term) |
+| \(\beta_1\) | Coefficient on the previous conditional variance (GARCH term) |
+| \(t-1\) | Previous observation |
+| \(1,1\) | One lag of squared innovations and one lag of conditional variance |
+
+**Interpretation:** GARCH models volatility as changing over time. Large recent shocks can raise conditional variance, and high variance can persist. The parameter condition shown is a standard stationarity condition for the usual GARCH(1,1) specification, not a guarantee that the model fits every return series well.
+
+### Question 16. What is standardized-residual bootstrap sampling, and why resample residual vectors jointly?
+
+For asset \(i\), a standardized residual is
+
+\[
+z_{i,t}=\frac{\varepsilon_{i,t}}{\sigma_{i,t}}.
+\]
+
+If residuals from all \(N\) assets are aligned by date, a sampled residual vector can be represented as
+
+\[
+\mathbf{z}^{*}_{t}
+=
+\begin{bmatrix}
+z_{1,k}\\
+z_{2,k}\\
+\vdots\\
+z_{N,k}
+\end{bmatrix},
+\]
+
+where \(k\) is a sampled historical index shared by all assets in that vector.
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(z_{i,t}\) | Standardized residual of asset \(i\) at time \(t\) |
+| \(\varepsilon_{i,t}\) | Estimated innovation for asset \(i\) |
+| \(\sigma_{i,t}\) | Estimated conditional standard deviation for asset \(i\) |
+| \(\mathbf{z}^{*}_{t}\) | Resampled vector of standardized residuals for a simulated period |
+| \(N\) | Number of assets |
+| \(k\) | Historical row selected for resampling |
+| \(*\) | Indicates a bootstrap-sampled quantity |
+
+**Interpretation:** Sampling the same historical row across assets preserves the observed cross-sectional pattern of standardized residuals at that date. It does not guarantee that every dependence feature of future markets is reproduced.
+
+### Question 17. How is QLIKE loss calculated for variance forecasts?
+
+**Equation**
+
+\[
+\operatorname{QLIKE}
+=
+\frac{1}{T}\sum_{t=1}^{T}
+\left[
+\ln(h_t)+\frac{y_t}{h_t}
+\right]
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(\operatorname{QLIKE}\) | Average quasi-likelihood loss |
+| \(T\) | Number of evaluated holdout observations |
+| \(h_t\) | Positive forecast variance for observation \(t\) |
+| \(y_t\) | Nonnegative realized-variance proxy for observation \(t\), such as squared return |
+| \(\ln(h_t)\) | Natural logarithm of the forecast variance |
+| \(\sum\) | Sum across the evaluation observations |
+
+**Interpretation:** Lower QLIKE is generally preferred when models are evaluated on the same observations with the same realized proxy and compatible conventions. In this project, squared returns are used as a proxy for realized variance, so the score should not be interpreted as comparison against perfectly observed latent volatility.
+
+**Implementation checks:** Forecast variances must be strictly positive; realized proxies must be nonnegative; and the forecast and realized arrays must be aligned and of equal length. The project tests invalid inputs and the chronological split.
+
+### Question 18. How can the GARCH and historical-variance forecasts be compared fairly?
+
+A useful comparison is the average QLIKE score for each model over the **same holdout dates and the same realized-variance proxy**:
+
+\[
+\Delta_{\mathrm{QLIKE}}
+=
+\operatorname{QLIKE}_{\mathrm{historical}}
+-
+\operatorname{QLIKE}_{\mathrm{GARCH}}.
+\]
+
+**Symbols**
+
+| Symbol | Meaning |
+|---|---|
+| \(\Delta_{\mathrm{QLIKE}}\) | Difference between the two models' QLIKE scores |
+| \(\operatorname{QLIKE}_{\mathrm{historical}}\) | QLIKE of the expanding historical-variance baseline |
+| \(\operatorname{QLIKE}_{\mathrm{GARCH}}\) | QLIKE of the GARCH model |
+| Positive \(\Delta_{\mathrm{QLIKE}}\) | GARCH has the lower QLIKE score in this defined comparison |
+| Negative \(\Delta_{\mathrm{QLIKE}}\) | Historical-variance baseline has the lower QLIKE score |
+
+**Interpretation:** This sign convention makes a positive difference favor GARCH. The actual output files must be inspected to determine which model performed better; do not infer model superiority from the model names alone.
+
+### General mathematical notation glossary
+
+| Symbol or notation | Meaning |
+|---|---|
+| \(t\) | Time or observation index |
+| \(i,j\) | Asset indices |
+| \(N\) | Number of assets |
+| \(T\) | Number of observations |
+| \(\bar{x}\) | Sample mean of \(x\) |
+| \(s^2\) | Sample variance |
+| \(s\), \(\sigma\) | Standard deviation; context determines whether it is sample or conditional |
+| \(\Sigma\) | Covariance matrix |
+| \(\rho\) | Correlation coefficient |
+| \(\mu\) | Mean parameter or vector |
+| \(\omega,\alpha_1,\beta_1\) | GARCH variance parameters |
+| \(\sum\) | Summation |
+| \(\ln\) | Natural logarithm |
+| \(\exp(x)\) or \(e^x\) | Exponential function |
+| \(\sqrt{x}\) | Nonnegative square root |
+| \(x^2\) | \(x\) multiplied by itself |
+| \(\mathbb{E}[X]\) | Expected value of random variable \(X\) |
+| \(\sim\) | Follows a stated probability distribution |
+| \(\geq,\leq\) | Greater than or equal to; less than or equal to |
+| \(\mathsf{T}\) | Matrix or vector transpose |
+| \(\mathbf{x}\) | A vector |
+| \(\boldsymbol{\Sigma}\) | A matrix |
+| \(1-\alpha\) | Tail probability associated with quantile level \(\alpha\) |
+| \(*\) | Bootstrap-sampled value when used as a superscript in this section |
+
+---
+
+## Model Comparison Results
+
+One recorded run produced the following terminal-value and risk comparison. These are outputs from a particular configuration and historical sample, not universal or guaranteed results.
+
+| Metric | Multivariate Normal | GARCH(1,1) + Joint Residual Bootstrap |
+|---|---:|---:|
+| Simulations | 10,000 | 10,000 |
+| Horizon | 252 trading days | 252 trading days |
+| Initial value | $10,000 | $10,000 |
+| Mean terminal value | $14,210.08 | $14,571.12 |
+| Median terminal value | $13,628.99 | $13,871.93 |
+| 5th-percentile terminal value | $8,544.50 | $8,854.19 |
+| 95th-percentile terminal value | $21,777.04 | $21,254.57 |
+| Simulated probability of loss (%) | 13.97% | 11.05% |
+| Reported 95% VaR | $1,455.50 | $1,145.81 |
+| Reported 95% ES | $2,345.24 | $2,226.71 |
+| Reported 99% VaR | $2,984.64 | $2,924.60 |
+| Reported 99% ES | $3,517.86 | $3,746.47 |
+
+**How to read this comparison**
+
+- The GARCH/bootstrap run has a higher mean and median terminal value in this particular simulation.
+- Its reported 95% ES is lower, while its reported 99% ES is higher.
+- This mixed result does not establish that one model is safer or superior.
+- The precise VaR/ES meaning depends on the implementation's loss definition and empirical quantile/tail convention. Check the generated report and code before comparing these values with another system.
+
+**GARCH out-of-sample forecast validation:** Use `reports/garch_validation/qlike_scores.csv`, `reports/garch_validation/qlike_improvement.csv`, and `reports/garch_validation/garch_validation_report.md` to determine which model has the lower QLIKE score. This README does not claim a winning model without those measured results.
+
+## Reports and Interactive Charts
+
+The scripts generate HTML charts that can be opened in a web browser. Open the relevant `.html` file from File Explorer, or use PowerShell from the repository root, for example:
+
+```powershell
+Start-Process .\reports\garch_comparison\charts\terminal_value_comparison.html
+```
+
+### GARCH simulation comparison
+
+- `reports/garch_comparison/charts/terminal_value_comparison.html` — terminal value comparison.
+- `reports/garch_comparison/charts/risk_measure_comparison.html` — downside risk statistics.
+- `reports/garch_comparison/charts/terminal_distribution_comparison.html` — terminal-value distributions.
+
+### GARCH forecast validation
+
+- `reports/garch_validation/charts/qlike_model_comparison.html` — QLIKE score comparison.
+- `reports/garch_validation/charts/holdout_volatility_forecasts.html` — holdout volatility forecasts.
+- `reports/garch_validation/charts/nvda_variance_forecast_vs_realized.html` — NVIDIA variance forecast versus the realized proxy.
+- `reports/garch_validation/charts/qlike_improvement.html` — QLIKE difference under the convention described above.
+
+These are local report paths. They become accessible to other people only if the generated HTML files are committed to the repository or otherwise hosted and shared.
+
+## Installation and Execution
 
 ### 1. Clone the repository
 
-Replace `YOUR-USERNAME` with your GitHub username after publishing the repository.
-
-```bash
-git clone https://github.com/YOUR-USERNAME/monte-carlo-portfolio-risk-simulator.git
+```powershell
+git clone https://github.com/nasaamit005/monte-carlo-portfolio-risk-simulator.git
 cd monte-carlo-portfolio-risk-simulator
 ```
 
-### 2. Create a virtual environment
+### 2. Create and activate a virtual environment
 
-For Windows with Python 3.12:
+For Windows PowerShell with Python 3.12 installed:
 
 ```powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-If PowerShell blocks activation, use an appropriate process-scoped execution policy or run the commands in a terminal where activation is permitted.
+If script execution is blocked in the current PowerShell session, run:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+.\.venv\Scripts\Activate.ps1
+```
 
 ### 3. Install dependencies
 
 ```powershell
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-## Run the Project
-
-Run the scripts from the repository root in the appropriate order.
-
-### Download historical market data
+### 4. Run the GARCH simulation comparison
 
 ```powershell
-python .\src\download_data.py
+python .\src\garch_portfolio_simulation.py
 ```
 
-### Validate downloaded data
+### 5. Run out-of-sample GARCH validation
 
 ```powershell
-python .\src\validate_data.py
+python .\src\validate_garch_forecasts.py
 ```
 
-### Generate portfolio performance analysis
+### 6. Run the automated tests
 
 ```powershell
-python .\src\portfolio_analysis.py
+python -m pytest .\tests -v
 ```
 
-### Run Monte Carlo simulation
-
-```powershell
-python .\src\monte_carlo_simulation.py
-```
-
-### Run automated tests
-
-```powershell
-python -m pytest -v
-```
-
-These commands assume the corresponding files exist in `src/`. Use the filenames present in your repository if your local scripts differ.
+**Note:** The commands above assume the script names and data paths match your checkout. Run commands from the repository root. Some outputs may require running the relevant data preparation scripts first.
 
 ## Testing
 
-The project includes automated tests in `tests/test_monte_carlo.py`.
+The latest recorded test run completed with **43 tests passing**:
 
-The test suite is intended to check core simulation behavior, including input validation, reproducibility, covariance handling, terminal-value validation, and risk-metric calculations.
-
-Run the tests after changing the simulation code:
-
-```powershell
-python -m pytest -v
+```text
+43 passed
 ```
 
-Report the actual test results from your latest run rather than relying on a previous test count.
+The test suite covers the Monte Carlo workflow, GARCH comparison, and GARCH validation. Relevant test files include:
 
-## Risk Interpretation
+- `tests/test_monte_carlo.py`
+- `tests/test_garch_comparison.py`
+- `tests/test_garch_validation.py`
 
-VaR and Expected Shortfall summarize different aspects of downside risk:
+Test counts can change as the project evolves. Re-run pytest to confirm the status of your current checkout.
 
-- **VaR** estimates a loss threshold at a selected confidence level.
-- **Expected Shortfall** estimates the average loss among outcomes in the selected worst tail.
-- **Probability of loss** estimates the proportion of simulations ending below the initial portfolio value.
-- **Terminal value percentiles** illustrate the spread of possible ending portfolio values under the model.
+## Assumptions and Limitations
 
-These measures describe model-generated scenarios. They do not predict the exact future value of a portfolio.
-
-## Limitations
-
-- Historical return distributions may not represent future market conditions.
-- The multivariate normal assumption may underrepresent extreme market events and fat tails.
-- Historical mean returns and covariance estimates are subject to sampling error.
-- Market volatility and correlations can change over time.
-- The model may not fully capture volatility clustering, market regimes, or liquidity shocks.
-- Transaction costs, taxes, slippage, and market impact may not be included.
-- Portfolio rebalancing assumptions may differ from actual investor behavior.
-- Monte Carlo output depends on model assumptions, input data, and configuration.
-- Historical and simulated outcomes do not guarantee future performance.
+- Historical estimates may not represent future market behavior.
+- The multivariate-normal model may underrepresent heavy tails and extreme market events.
+- GARCH(1,1) models conditional variance but does not capture every possible market regime or dependence pattern.
+- Joint residual bootstrap depends on the representativeness of historical standardized residuals.
+- A squared return is a noisy proxy for latent daily variance.
+- Forecast validation depends on the selected holdout window, benchmark model, and loss function.
+- Transaction costs, taxes, slippage, liquidity constraints, corporate-action details, and changing market regimes may not be fully modelled.
+- Equal weighting is a simplifying assumption and is not necessarily an optimal allocation.
+- Monte Carlo probabilities are conditional on the fitted model and its assumptions.
+- The reported numerical results depend on data, configuration, and implementation details.
 
 ## Future Improvements
 
-- Add Student's t-distribution or other fat-tailed return models.
-- Incorporate volatility models such as GARCH.
-- Add historical simulation and bootstrap-based scenario analysis.
-- Include transaction costs, taxes, and rebalancing constraints.
-- Compare equal-weighted and alternative portfolio allocations.
-- Add stress testing and extreme-event scenarios.
-- Introduce walk-forward parameter estimation.
-- Add continuous integration with GitHub Actions.
-- Publish a hosted dashboard and updated results report.
+- Add rolling-window and regime-sensitive parameter estimation.
+- Compare alternative innovation distributions and volatility models.
+- Evaluate portfolio tail risk across multiple holdout windows.
+- Add transaction-cost and rebalancing assumptions.
+- Add confidence intervals and sensitivity analysis for risk measures.
+- Add a configurable web dashboard for assets, weights, horizon, and simulation count.
+- Add continuous integration to run tests on every push.
+- Document data provenance, retrieval date, and licensing for the underlying market data.
 
-## Author
+## References
 
-**Amit Singh**
-
-GitHub: [@nasaamit005](https://github.com/nasaamit005)
-
-## License
-
-If the repository includes a `LICENSE` file, see that file for the applicable terms. If you intend to distribute this project under the MIT License, include a valid MIT license file in the repository.
+- Engle, R. F. (1982). *Autoregressive Conditional Heteroscedasticity with Estimates of the Variance of United Kingdom Inflation*. Econometrica.
+- Bollerslev, T. (1986). *Generalized Autoregressive Conditional Heteroskedasticity*. Journal of Econometrics.
+- McNeil, A. J., Frey, R., and Embrechts, P. (2015). *Quantitative Risk Management: Concepts, Techniques and Tools*. Princeton University Press.
+- `docs/MONTE_CARLO_METHODOLOGY.md` — project methodology notes.
+- `docs/REFERENCES.md` — additional project references.
 
 ---
 
-*Portfolio project demonstrating Python-based quantitative finance, Monte Carlo simulation, portfolio risk measurement, statistical modeling, interactive visualization, and automated testing. For educational and analytical purposes only; not investment advice.*
+## Author / Portfolio Use
 
+This project demonstrates applied Python, financial return analysis, Monte Carlo simulation, volatility modelling, model validation, automated testing, and interactive reporting. In interviews, describe the methods you implemented, the assumptions you tested, the actual outputs you measured, and the limitations you identified.
 
-## Research Papers and Academic References
-
-The methodology used in this project is informed by established research in portfolio theory, Monte Carlo simulation, and financial risk measurement. The following references provide theoretical foundations and context for the implemented methods.
-
-### 1. Portfolio Selection and Diversification
-
-**Markowitz, H. (1952).** *Portfolio Selection.* The Journal of Finance, 7(1), 77–91.
-
-- **Relevance:** Foundational work on portfolio diversification and the relationship between risk and return.
-- **Application in this project:** Provides theoretical context for analyzing a portfolio of multiple assets and their return relationships.
-- **Paper:** https://doi.org/10.1111/j.1540-6261.1952.tb01525.x
-
-### 2. Monte Carlo Simulation in Financial Engineering
-
-**Glasserman, P. (2003).** *Monte Carlo Methods in Financial Engineering.* Springer.
-
-- **Relevance:** Comprehensive treatment of Monte Carlo methods and their applications in financial engineering and risk management.
-- **Application in this project:** Provides background for simulating portfolio outcomes and estimating distributions of future values.
-- **Publisher:** https://doi.org/10.1007/978-0-387-21617-1
-
-### 3. Expected Shortfall and Tail Risk
-
-**Rockafellar, R. T., & Uryasev, S. (2000).** Optimization of Conditional Value-at-Risk. *The Journal of Risk, 2*(3), 21–41.
-
-- **Relevance:** Important research on Conditional Value-at-Risk (CVaR), also commonly associated with Expected Shortfall.
-- **Application in this project:** Provides theoretical context for evaluating losses in the worst portion of a simulated return distribution.
-- **Paper:** https://doi.org/10.21314/JOR.2000.038
-
-### 4. Market Risk Measurement and Value at Risk
-
-**Jorion, P. (2010).** Market Risk. *Encyclopedia of Quantitative Finance.*
-
-- **Relevance:** Discusses Value at Risk, market-risk measurement, stress testing, and the limitations of risk estimates.
-- **Application in this project:** Provides background for interpreting VaR estimates and understanding why risk models have limitations.
-- **Reference:** https://doi.org/10.1002/9780470061602.eqf15008
-
-### 5. Dynamic Correlations in Financial Returns
-
-**Engle, R. (2002).** Dynamic Conditional Correlation: A Simple Class of Multivariate Generalized Autoregressive Conditional Heteroskedasticity Models. *Journal of Business & Economic Statistics, 20*(3), 339–350.
-
-- **Relevance:** Introduces a framework for modeling time-varying correlations between financial assets.
-- **Application in this project:** Provides a useful comparison with the historical covariance approach used in the simulation. This project does not claim to implement a Dynamic Conditional Correlation (DCC-GARCH) model unless that functionality is added separately.
-- **Paper:** https://doi.org/10.1198/073500102288618487
-
-### 6. Regulatory Market Risk Framework
-
-**Basel Committee on Banking Supervision. (2019).** *Minimum Capital Requirements for Market Risk.*
-
-- **Relevance:** Describes a regulatory framework for measuring market risk, including the use of Expected Shortfall in its internal-models approach.
-- **Application in this project:** Provides industry context for tail-risk measurement. This educational simulator is not a regulatory capital model.
-- **Official publication:** https://www.bis.org/bcbs/publ/d457.htm
-
-### Research and Implementation Disclaimer
-
-These references support the theoretical background of the project. They should not be interpreted as evidence that every method described in the cited literature has been implemented in this repository.
-
-The simulator uses its own documented assumptions and implementation choices. In particular, historical return estimates, covariance assumptions, rebalancing frequency, simulation horizon, and risk-measure conventions affect the results.
-
-This project is educational and analytical. Its outputs are model-based estimates, not investment advice or guarantees of future performance.
+**Disclaimer:** For educational and portfolio-demonstration purposes only. Nothing in this repository constitutes investment, trading, tax, or legal advice.
