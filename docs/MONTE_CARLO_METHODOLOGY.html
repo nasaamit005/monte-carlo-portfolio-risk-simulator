@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Monte Carlo Portfolio Risk — Methodology</title>
+
+<style>
+
+:root {
+    --navy: #12345A;
+    --accent: #0F766E;
+    --text: #263449;
+    --muted: #5C6B80;
+    --border: #D6E2F0;
+    --pale-blue: #EFF6FF;
+    --pale-teal: #F0FDFA;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #F2F5FA;
+    color: var(--text);
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    line-height: 1.65;
+}
+
+.hero {
+    color: white;
+    background: linear-gradient(120deg, var(--navy), var(--accent));
+    padding: 35px 24px;
+    border-bottom: 5px solid var(--accent);
+}
+
+.hero-inner {
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+.eyebrow {
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #DCEAFE;
+}
+
+.hero h1 {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 28pt;
+    line-height: 1.2;
+    margin: 10px 0;
+    color: white;
+}
+
+.hero p {
+    margin: 0;
+    color: #E6EDF8;
+    font-size: 12pt;
+}
+
+main {
+    max-width: 1050px;
+    margin: 26px auto 35px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 34px 42px;
+    box-shadow: 0 8px 28px rgba(18, 52, 90, 0.07);
+}
+
+h1, h2, h3, h4 {
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.3;
+    break-after: avoid;
+}
+
+main h1 {
+    color: var(--navy);
+    font-size: 23pt;
+}
+
+h2 {
+    color: var(--navy);
+    font-size: 18pt;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding: 9px 13px;
+    border-left: 5px solid var(--accent);
+    border-bottom: 1px solid var(--border);
+    background: var(--pale-blue);
+}
+
+h3 {
+    color: var(--accent);
+    font-size: 14pt;
+    margin-top: 22px;
+}
+
+h4 {
+    color: var(--navy);
+    font-size: 12pt;
+}
+
+p, li {
+    font-size: 12pt;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+a {
+    color: var(--accent);
+    overflow-wrap: anywhere;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0 24px;
+    font-size: 11pt;
+}
+
+thead th, th {
+    background: var(--navy);
+    color: white;
+    font-weight: bold;
+    text-align: left;
+}
+
+th, td {
+    border: 1px solid var(--border);
+    padding: 9px 11px;
+    vertical-align: top;
+}
+
+tbody tr:nth-child(even) {
+    background: var(--pale-blue);
+}
+
+tbody tr:nth-child(odd) {
+    background: #FFFFFF;
+}
+
+blockquote {
+    margin: 22px 0;
+    padding: 13px 20px;
+    background: var(--pale-teal);
+    border-left: 5px solid var(--teal, #0F766E);
+}
+
+code {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 10pt;
+    background: #EDF2F7;
+    padding: 2px 5px;
+    border-radius: 4px;
+    overflow-wrap: anywhere;
+}
+
+pre {
+    background: #132238;
+    color: #F0F6FF;
+    padding: 17px;
+    border-radius: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+pre code {
+    background: transparent;
+    color: inherit;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+}
+
+mjx-container {
+    color: #142D4E;
+    max-width: 100%;
+}
+
+mjx-container[display="true"] {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 14px 10px;
+    margin: 18px 0 !important;
+    background: #F1F7FF;
+    border: 1px solid #D5E5FB;
+    border-radius: 8px;
+}
+
+.actions {
+    max-width: 1050px;
+    margin: 18px auto 0;
+    padding: 0 8px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.actions button {
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--navy);
+    padding: 10px 15px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.actions button:hover {
+    background: var(--pale-blue);
+}
+
+footer {
+    max-width: 1050px;
+    margin: 0 auto;
+    color: var(--muted);
+    padding: 0 20px 28px;
+    font-size: 10pt;
+    text-align: center;
+}
+
+@media (max-width: 700px) {
+    main {
+        margin: 12px;
+        padding: 20px 17px;
+    }
+
+    .hero {
+        padding: 25px 18px;
+    }
+
+    .hero h1 {
+        font-size: 23pt;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+@page {
+    size: A4;
+    margin: 18mm 16mm;
+}
+
+@media print {
+    body {
+        background: white;
+        font-size: 12pt;
+    }
+
+    .hero {
+        background: white !important;
+        color: var(--navy) !important;
+        padding: 0 0 15px;
+        border-bottom: 2px solid var(--accent);
+    }
+
+    .hero h1 {
+        color: var(--navy);
+    }
+
+    .hero p, .eyebrow {
+        color: var(--navy);
+    }
+
+    main {
+        max-width: none;
+        margin: 0;
+        padding: 15px 0;
+        box-shadow: none;
+        border: 0;
+    }
+
+    .actions {
+        display: none;
+    }
+
+    h2, h3 {
+        break-after: avoid;
+    }
+
+    tr, blockquote {
+        break-inside: avoid;
+    }
+
+    a {
+        color: var(--navy);
+        text-decoration: none;
+    }
+
+    table {
+        font-size: 10pt;
+    }
+}
+
+</style>
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)'], ['$', '$']],
+    displayMath: [['\\[', '\\]'], ['$$', '$$']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: [
+      'script', 'noscript', 'style', 'textarea', 'pre', 'code'
+    ]
+  }
+};
+</script>
+
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">
+      Quantitative Finance · Research &amp; Analytics
+    </div>
+    <h1>Monte Carlo Portfolio Risk — Methodology</h1>
+    <p>Mathematical framework, model assumptions, and validation approach</p>
+  </div>
+</header>
+
+<div class="actions">
+  <button type="button" onclick="window.print()">
+    Print / Save as PDF
+  </button>
+  <button
+    type="button"
+    onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    Back to top
+  </button>
+</div>
+
+<main>
+<h1 id="monte-carlo-portfolio-risk-simulator-methodology">Monte Carlo Portfolio Risk Simulator — Methodology</h1>
+<h2 id="objective">Objective</h2>
+<p>Estimate a distribution of hypothetical terminal portfolio values and downside
+risk measures using Monte Carlo simulation calibrated to historical returns.</p>
+<h2 id="portfolio">Portfolio</h2>
+<p>Five assets are held at equal weights: AAPL, AMZN, GOOGL, MSFT, and NVDA.
+Weights are reset to equal weights every simulated trading day. The S&amp;P 500
+benchmark is not included as a holding in this simulation.</p>
+<h2 id="data-and-return-transformations">Data and return transformations</h2>
+<p>Given adjusted or prepared prices (P_{i,t}), calculate log returns:</p>
+<p>[
+r_{i,t} = \ln(P_{i,t}/P_{i,t-1})
+]</p>
+<p>Estimate the sample mean vector (\hat{\mu}) and covariance matrix
+(\hat{\Sigma}) from the observed daily log-return series.</p>
+<h2 id="monte-carlo-model">Monte Carlo model</h2>
+<p>For every simulation and day, generate correlated asset log returns:</p>
+<p>[
+\mathbf{r}_t \sim \mathcal{N}(\hat{\mu},\hat{\Sigma})
+]</p>
+<p>Convert them to simple returns:</p>
+<p>[
+R_{i,t} = e^{r_{i,t}}-1
+]</p>
+<p>Calculate daily equal-weight portfolio returns and compound wealth:</p>
+<p>[
+R_{p,t} = \sum_i w_i R_{i,t}, \qquad
+V_T = V_0 \prod_{t=1}^{T}(1+R_{p,t})
+]</p>
+<p>The covariance matrix is symmetrized and its eigenvalues are floored at a small
+positive value for numerical stability before sampling.</p>
+<h2 id="risk-metrics">Risk metrics</h2>
+<p>For terminal simple return (R_T=V_T/V_0-1), at confidence level (c):</p>
+<p>[
+q_{1-c}=Q_{1-c}(R_T)
+]</p>
+<p>The signed VaR loss amount is (-V_0 q_{1-c}). Expected Shortfall is estimated
+as the negative initial-capital-scaled mean of terminal returns at or below
+the lower-tail quantile.</p>
+<p>Probability of loss is the proportion of simulations with (V_T&lt;V_0).
+Terminal value percentiles summarize the modeled distribution, not guaranteed
+future bounds.</p>
+<h2 id="important-distinctions">Important distinctions</h2>
+<ul>
+<li>The model simulates a joint distribution of returns; it does not predict a
+  specific market path.</li>
+<li>Correlation is estimated from the historical covariance matrix, but may not
+  remain stable during stress.</li>
+<li>The Gaussian assumption can understate fat tails and extreme joint events.</li>
+<li>Historical mean and covariance estimates are uncertain.</li>
+<li>No transaction costs, taxes, slippage, or liquidity constraints are included.</li>
+<li>The output is not investment advice or a validated production risk model.</li>
+</ul>
+<h2 id="suggested-validation">Suggested validation</h2>
+<ol>
+<li>Compare simulated and historical marginal return distributions.</li>
+<li>Compare model VaR with realized out-of-sample losses.</li>
+<li>Perform VaR exception counting and independence/conditional coverage tests.</li>
+<li>Test block bootstrap and Student-t alternatives.</li>
+<li>Add volatility models and explicit stress scenarios.</li>
+<li>Compare results under different estimation windows and rebalancing schedules.</li>
+</ol>
+</main>
+
+<footer>
+  Monte Carlo Portfolio Risk Simulator ·
+  Educational analysis, not investment advice
+</footer>
+
+</body>
+</html>

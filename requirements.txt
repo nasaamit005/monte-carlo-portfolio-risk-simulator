@@ -1,0 +1,10 @@
+
+yfinance
+pandas
+numpy
+scipy
+plotly
+statsmodels
+pytest
+streamlit
+kaleido
