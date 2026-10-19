@@ -268,32 +268,59 @@ $$
 
 **Interpretation:** Variance measures dispersion in squared-return units; standard deviation expresses dispersion in return units. Daily volatility should not be confused with annualized volatility.
 
-### Covariance and Correlation Between Two Assets
+### ## Covariance and Correlation Between Two Assets
 
-**Equations**
+### Equations
 
-$$
-\operatorname{Cov}(r_i,r_j) = \frac{1}{T-1}\sum_{t=1}^{T} (r_{i,t}-\bar r_i)(r_{j,t}-\bar r_j)
-$$
+**1. Sample covariance**
 
 $$
-\rho_{ij} = \frac{\operatorname{Cov}(r_i,r_j)}{s_i s_j}
+\mathrm{Cov}(r_i,r_j)
+=
+\frac{1}{T-1}
+\sum_{t=1}^{T}
+(r_{i,t}-\bar{r}_i)
+(r_{j,t}-\bar{r}_j)
 $$
 
-**Symbols**
+**2. Correlation coefficient**
+
+$$
+\rho_{ij}
+=
+\frac{\mathrm{Cov}(r_i,r_j)}
+{s_i s_j}
+$$
+
+### Symbols and Definitions
 
 | Symbol | Meaning |
 |---|---|
-| $\operatorname{Cov}(r_i,r_j)$ | Sample covariance between assets $i$ and $j$ |
-| $\rho_{ij}$ | Correlation coefficient between assets $i$ and $j$ |
-| $r_{i,t}$ | Return of asset $i$ at time $t$ |
-| $r_{j,t}$ | Return of asset $j$ at time $t$ |
-| $\bar r_i,\bar r_j$ | Sample mean returns for assets $i$ and $j$ |
-| $s_i,s_j$ | Sample standard deviations for assets $i$ and $j$ |
-| $i,j$ | Asset indices |
-| $T$ | Number of aligned observations |
+| \(\mathrm{Cov}(r_i,r_j)\) | Sample covariance between assets \(i\) and \(j\) |
+| \(\rho_{ij}\) | Correlation coefficient between assets \(i\) and \(j\) |
+| \(r_{i,t}\) | Return of asset \(i\) at time \(t\) |
+| \(r_{j,t}\) | Return of asset \(j\) at time \(t\) |
+| \(\bar{r}_i,\bar{r}_j\) | Sample mean returns of assets \(i\) and \(j\) |
+| \(s_i,s_j\) | Sample standard deviations of assets \(i\) and \(j\) |
+| \(i,j\) | Indices identifying the two assets |
+| \(t\) | Time-period index |
+| \(T\) | Number of aligned observations |
 
-**Interpretation:** Covariance captures how two return series move together in their original units. Correlation standardizes that relationship and lies between $-1$ and $+1$, when both series have nonzero variance.
+### Interpretation
+
+**Covariance** measures how two assets' returns move together in their original units.
+
+- **Positive covariance:** The assets' returns tend to move in the same direction.
+- **Negative covariance:** The assets' returns tend to move in opposite directions.
+- **Covariance near zero:** There is little linear co-movement, although nonlinear relationships may still exist.
+
+**Correlation** standardizes covariance, making the relationship easier to compare across assets. Its value lies between \(-1\) and \(+1\), provided both assets have nonzero variance.
+
+- \(\rho_{ij}=+1\): Perfect positive linear correlation.
+- \(\rho_{ij}=0\): No linear correlation.
+- \(\rho_{ij}=-1\): Perfect negative linear correlation.
+
+**Application in portfolio risk:** Covariance and correlation help estimate portfolio volatility and understand diversification benefits. Assets with less-than-perfect positive correlation can reduce overall portfolio risk, depending on their weights and individual volatilities.
 
 ### Portfolio Simple Return
 
