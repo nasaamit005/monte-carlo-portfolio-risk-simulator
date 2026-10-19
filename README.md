@@ -579,3 +579,64 @@ If the repository includes a `LICENSE` file, see that file for the applicable te
 ---
 
 *Portfolio project demonstrating Python-based quantitative finance, Monte Carlo simulation, portfolio risk measurement, statistical modeling, interactive visualization, and automated testing. For educational and analytical purposes only; not investment advice.*
+
+
+## Research Papers and Academic References
+
+The methodology used in this project is informed by established research in portfolio theory, Monte Carlo simulation, and financial risk measurement. The following references provide theoretical foundations and context for the implemented methods.
+
+### 1. Portfolio Selection and Diversification
+
+**Markowitz, H. (1952).** *Portfolio Selection.* The Journal of Finance, 7(1), 77–91.
+
+- **Relevance:** Foundational work on portfolio diversification and the relationship between risk and return.
+- **Application in this project:** Provides theoretical context for analyzing a portfolio of multiple assets and their return relationships.
+- **Paper:** https://doi.org/10.1111/j.1540-6261.1952.tb01525.x
+
+### 2. Monte Carlo Simulation in Financial Engineering
+
+**Glasserman, P. (2003).** *Monte Carlo Methods in Financial Engineering.* Springer.
+
+- **Relevance:** Comprehensive treatment of Monte Carlo methods and their applications in financial engineering and risk management.
+- **Application in this project:** Provides background for simulating portfolio outcomes and estimating distributions of future values.
+- **Publisher:** https://doi.org/10.1007/978-0-387-21617-1
+
+### 3. Expected Shortfall and Tail Risk
+
+**Rockafellar, R. T., & Uryasev, S. (2000).** Optimization of Conditional Value-at-Risk. *The Journal of Risk, 2*(3), 21–41.
+
+- **Relevance:** Important research on Conditional Value-at-Risk (CVaR), also commonly associated with Expected Shortfall.
+- **Application in this project:** Provides theoretical context for evaluating losses in the worst portion of a simulated return distribution.
+- **Paper:** https://doi.org/10.21314/JOR.2000.038
+
+### 4. Market Risk Measurement and Value at Risk
+
+**Jorion, P. (2010).** Market Risk. *Encyclopedia of Quantitative Finance.*
+
+- **Relevance:** Discusses Value at Risk, market-risk measurement, stress testing, and the limitations of risk estimates.
+- **Application in this project:** Provides background for interpreting VaR estimates and understanding why risk models have limitations.
+- **Reference:** https://doi.org/10.1002/9780470061602.eqf15008
+
+### 5. Dynamic Correlations in Financial Returns
+
+**Engle, R. (2002).** Dynamic Conditional Correlation: A Simple Class of Multivariate Generalized Autoregressive Conditional Heteroskedasticity Models. *Journal of Business & Economic Statistics, 20*(3), 339–350.
+
+- **Relevance:** Introduces a framework for modeling time-varying correlations between financial assets.
+- **Application in this project:** Provides a useful comparison with the historical covariance approach used in the simulation. This project does not claim to implement a Dynamic Conditional Correlation (DCC-GARCH) model unless that functionality is added separately.
+- **Paper:** https://doi.org/10.1198/073500102288618487
+
+### 6. Regulatory Market Risk Framework
+
+**Basel Committee on Banking Supervision. (2019).** *Minimum Capital Requirements for Market Risk.*
+
+- **Relevance:** Describes a regulatory framework for measuring market risk, including the use of Expected Shortfall in its internal-models approach.
+- **Application in this project:** Provides industry context for tail-risk measurement. This educational simulator is not a regulatory capital model.
+- **Official publication:** https://www.bis.org/bcbs/publ/d457.htm
+
+### Research and Implementation Disclaimer
+
+These references support the theoretical background of the project. They should not be interpreted as evidence that every method described in the cited literature has been implemented in this repository.
+
+The simulator uses its own documented assumptions and implementation choices. In particular, historical return estimates, covariance assumptions, rebalancing frequency, simulation horizon, and risk-measure conventions affect the results.
+
+This project is educational and analytical. Its outputs are model-based estimates, not investment advice or guarantees of future performance.
