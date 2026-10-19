@@ -276,114 +276,90 @@ $$
 
 A positive terminal return represents a gain, while a negative terminal return represents a loss.
 
+
 ## 7. Value at Risk (VaR)
 
 Value at Risk estimates a monetary loss threshold at a specified confidence level.
 
-$$
-\boxed{
-\operatorname{VaR}_{c}
-=
--V_0Q_{1-c}(R_p)
-}
-$$
-
-At a 95% confidence level:
+**General formula**
 
 $$
-\boxed{
-\operatorname{VaR}_{0.95}
-=
--V_0Q_{0.05}(R_p)
-}
+\boxed{\mathrm{VaR}_c=-V_0 Q_{1-c}(R_p)}
 $$
 
-**Symbols and meanings**
+**At a 95% confidence level**
+
+$$
+\boxed{\mathrm{VaR}_{0.95}=-V_0 Q_{0.05}(R_p)}
+$$
+
+### Symbols and meanings
 
 | Symbol | Name | Meaning |
 |---|---|---|
-| $\operatorname{VaR}_c$ | Value at Risk | Estimated loss threshold at confidence level $c$. |
+| $\mathrm{VaR}_c$ | Value at Risk | Estimated monetary loss threshold at confidence level $c$. |
 | $c$ | Confidence level | Risk confidence level, such as $0.95$ for 95%. |
 | $V_0$ | Initial investment | Starting monetary value of the portfolio. |
-| $R_p$ | Terminal portfolio return | Simulated total return over the investment horizon. |
-| $Q_{1-c}(R_p)$ | Lower-tail quantile | Return quantile at probability $1-c$. |
-| $Q$ | Quantile function | Identifies a specified percentile of the return distribution. |
+| $R_p$ | Terminal portfolio return | Simulated total portfolio return over the investment horizon. |
+| $Q_{1-c}(R_p)$ | Lower-tail quantile | Return threshold at probability $1-c$. |
+| $Q$ | Quantile function | Identifies a specified percentile of a return distribution. |
 
-At 95% confidence, the formula uses the 5th percentile of terminal returns. When this quantile is negative, the formula expresses VaR as a positive monetary loss threshold.
+At 95% confidence, the formula uses the 5th percentile of terminal returns. If this quantile is negative, VaR is expressed as a positive monetary loss threshold.
 
 VaR is a model-based estimate, not a guarantee that losses will remain below the stated amount.
 
+---
+
 ## 8. Expected Shortfall (ES)
 
-Expected Shortfall estimates the average monetary loss among the worst outcomes beyond the selected lower-tail threshold.
+Expected Shortfall estimates the average monetary loss among the worst outcomes in the selected lower tail of the return distribution.
+
+**General formula**
 
 $$
-\boxed{
-\operatorname{ES}_{c}
-=
--V_0\,
-\mathbb{E}
-\left[
-R_p\mid R_p\leq Q_{1-c}(R_p)
-\right]
-}
+\boxed{\mathrm{ES}_c=-V_0\,\mathbb{E}\left[R_p\mid R_p\leq Q_{1-c}(R_p)\right]}
 $$
 
-At a 95% confidence level:
+**At a 95% confidence level**
 
 $$
-\boxed{
-\operatorname{ES}_{0.95}
-=
--V_0\,
-\mathbb{E}
-\left[
-R_p\mid R_p\leq Q_{0.05}(R_p)
-\right]
-}
+\boxed{\mathrm{ES}_{0.95}=-V_0\,\mathbb{E}\left[R_p\mid R_p\leq Q_{0.05}(R_p)\right]}
 $$
 
-**Symbols and meanings**
+### Symbols and meanings
 
 | Symbol | Name | Meaning |
 |---|---|---|
-| $\operatorname{ES}_c$ | Expected Shortfall | Average monetary loss in the selected worst-return tail. |
+| $\mathrm{ES}_c$ | Expected Shortfall | Average monetary loss in the selected worst-return tail. |
 | $c$ | Confidence level | Risk confidence level, such as $0.95$ for 95%. |
 | $V_0$ | Initial investment | Initial monetary value of the portfolio. |
 | $R_p$ | Terminal portfolio return | Simulated total portfolio return. |
-| $\mathbb{E}$ | Expected value operator | Calculates the average under the specified condition. |
-| $\mid$ | Conditional operator | Means that the calculation applies only when the stated condition holds. |
+| $\mathbb{E}$ | Expected value operator | Calculates the average of values under the specified condition. |
+| $\mid$ | Conditional operator | Means the calculation applies only when the stated condition holds. |
 | $Q_{1-c}(R_p)$ | Lower-tail quantile | Return threshold defining the worst $1-c$ fraction of outcomes. |
-| $\leq$ | Less than or equal to | Selects returns at or below the threshold. |
+| $\leq$ | Less-than-or-equal-to operator | Selects returns at or below the threshold. |
 
 At 95% confidence, Expected Shortfall considers the worst 5% of terminal-return outcomes. Under this convention, a negative average return in that tail produces a positive monetary loss estimate.
+
+---
 
 ## 9. Probability of Loss
 
 The probability of loss estimates the fraction of simulated scenarios in which the terminal portfolio value is below the initial investment.
 
-$$
-\boxed{
-\Pr(V_T<V_0)
-=
-\frac{1}{M}
-\sum_{j=1}^{M}
-\mathbf{1}
-\left(V_T^{(j)}<V_0\right)
-}
-$$
-
-Expressed as a percentage:
+**General formula**
 
 $$
-\boxed{
-\text{Probability of Loss (\%)}
-=
-\Pr(V_T<V_0)\times100
-}
+\boxed{\Pr(V_T<V_0)=\frac{1}{M}\sum_{j=1}^{M}\mathbf{1}\left(V_T^{(j)}<V_0\right)}
 $$
 
-**Symbols and meanings**
+**Expressed as a percentage**
+
+$$
+\boxed{\text{Probability of Loss (\%)}=100\times\Pr(V_T<V_0)}
+$$
+
+### Symbols and meanings
 
 | Symbol | Name | Meaning |
 |---|---|---|
@@ -393,19 +369,15 @@ $$
 | $M$ | Number of simulations | Total number of Monte Carlo simulation paths. |
 | $j$ | Simulation index | Identifies an individual simulation path. |
 | $V_T^{(j)}$ | Simulated terminal value | Ending portfolio value in simulation $j$. |
-| $\mathbf{1}(\cdot)$ | Indicator function | Equals $1$ when the condition is true and $0$ otherwise. |
+| $\mathbf{1}(\cdot)$ | Indicator function | Equals 1 when the condition is true and 0 otherwise. |
 | $\sum$ | Summation operator | Adds the indicator values across all simulations. |
 | $<$ | Less-than operator | Tests whether the terminal value is below the initial value. |
-| $\times100$ | Percentage conversion | Converts a probability expressed as a decimal into a percentage. |
+| $\times 100$ | Percentage conversion | Converts a probability expressed as a decimal into a percentage. |
 
-For example, if 1,500 out of 10,000 simulations finish below the initial investment:
-
-$$
-\Pr(V_T<V_0)=\frac{1{,}500}{10{,}000}=0.15
-$$
+**Example:** If 1,500 out of 10,000 simulations finish below the initial investment:
 
 $$
-\boxed{\text{Probability of Loss}=15\%}
+\text{Probability of Loss}=\frac{1500}{10000}\times100=15\%
 $$
 
 This probability is an estimate based on the model assumptions and historical inputs. It is not a guarantee of future investment performance.
@@ -413,6 +385,7 @@ This probability is an estimate based on the model assumptions and historical in
 ---
 
 **Implementation note:** These equations describe the intended mathematical framework. Verify the current Python implementation before claiming that each equation exactly matches the code, particularly the portfolio rebalancing method and the calculations used for VaR and Expected Shortfall.
+
 
 
 ## Simulation Configuration
