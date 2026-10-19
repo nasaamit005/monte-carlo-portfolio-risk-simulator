@@ -8,3 +8,5 @@ statsmodels
 pytest
 streamlit
 kaleido
+arch
+

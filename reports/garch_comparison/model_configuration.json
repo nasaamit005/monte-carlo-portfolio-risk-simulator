@@ -1,0 +1,35 @@
+{
+  "assets": [
+    "AAPL",
+    "AMZN",
+    "GOOGL",
+    "MSFT",
+    "NVDA"
+  ],
+  "simulation_count": 10000,
+  "horizon_days": 252,
+  "initial_portfolio_value": 10000.0,
+  "training_fraction": 0.8,
+  "training_start": "2016-10-18",
+  "training_end": "2024-10-14",
+  "holdout_start": "2024-10-15",
+  "holdout_end": "2026-10-16",
+  "holdout_used_for_fitting": false,
+  "random_seed_normal": 42,
+  "random_seed_garch": 43,
+  "weights": {
+    "AAPL": 0.2,
+    "AMZN": 0.2,
+    "GOOGL": 0.2,
+    "MSFT": 0.2,
+    "NVDA": 0.2
+  },
+  "garch_distribution": "Normal innovations with joint residual bootstrap",
+  "limitations": [
+    "Marginal GARCH(1,1) models, not a full multivariate GARCH model.",
+    "Joint residual bootstrap retains empirical contemporaneous shocks.",
+    "Dynamic cross-asset correlations are not modeled explicitly.",
+    "The holdout is reserved but not evaluated in this script.",
+    "Transaction costs, taxes, liquidity, and slippage are excluded."
+  ]
+}
