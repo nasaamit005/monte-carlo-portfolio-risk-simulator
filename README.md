@@ -268,59 +268,32 @@ $$
 
 **Interpretation:** Variance measures dispersion in squared-return units; standard deviation expresses dispersion in return units. Daily volatility should not be confused with annualized volatility.
 
-### ## Covariance and Correlation Between Two Assets
+### Covariance and Correlation Between Two Assets
 
-### Equations
-
-**1. Sample covariance**
+**Equations**
 
 $$
-\mathrm{Cov}(r_i,r_j)
-=
-\frac{1}{T-1}
-\sum_{t=1}^{T}
-(r_{i,t}-\bar{r}_i)
-(r_{j,t}-\bar{r}_j)
+\mathrm{Cov}(r_i,r_j) = \frac{1}{T-1}\sum_{t=1}^{T} (r_{i,t}-\bar r_i)(r_{j,t}-\bar r_j)
 $$
 
-**2. Correlation coefficient**
-
 $$
-\rho_{ij}
-=
-\frac{\mathrm{Cov}(r_i,r_j)}
-{s_i s_j}
+\rho_{ij} = \frac{\mathrm{Cov}(r_i,r_j)}{s_i s_j}
 $$
 
-### Symbols and Definitions
+**Symbols**
 
 | Symbol | Meaning |
 |---|---|
-| \(\mathrm{Cov}(r_i,r_j)\) | Sample covariance between assets \(i\) and \(j\) |
-| \(\rho_{ij}\) | Correlation coefficient between assets \(i\) and \(j\) |
-| \(r_{i,t}\) | Return of asset \(i\) at time \(t\) |
-| \(r_{j,t}\) | Return of asset \(j\) at time \(t\) |
-| \(\bar{r}_i,\bar{r}_j\) | Sample mean returns of assets \(i\) and \(j\) |
-| \(s_i,s_j\) | Sample standard deviations of assets \(i\) and \(j\) |
-| \(i,j\) | Indices identifying the two assets |
-| \(t\) | Time-period index |
-| \(T\) | Number of aligned observations |
+| $\mathrm{Cov}(r_i,r_j)$ | Sample covariance between assets $i$ and $j$ |
+| $\rho_{ij}$ | Correlation coefficient between assets $i$ and $j$ |
+| $r_{i,t}$ | Return of asset $i$ at time $t$ |
+| $r_{j,t}$ | Return of asset $j$ at time $t$ |
+| $\bar r_i,\bar r_j$ | Sample mean returns for assets $i$ and $j$ |
+| $s_i,s_j$ | Sample standard deviations for assets $i$ and $j$ |
+| $i,j$ | Asset indices |
+| $T$ | Number of aligned observations |
 
-### Interpretation
-
-**Covariance** measures how two assets' returns move together in their original units.
-
-- **Positive covariance:** The assets' returns tend to move in the same direction.
-- **Negative covariance:** The assets' returns tend to move in opposite directions.
-- **Covariance near zero:** There is little linear co-movement, although nonlinear relationships may still exist.
-
-**Correlation** standardizes covariance, making the relationship easier to compare across assets. Its value lies between \(-1\) and \(+1\), provided both assets have nonzero variance.
-
-- \(\rho_{ij}=+1\): Perfect positive linear correlation.
-- \(\rho_{ij}=0\): No linear correlation.
-- \(\rho_{ij}=-1\): Perfect negative linear correlation.
-
-**Application in portfolio risk:** Covariance and correlation help estimate portfolio volatility and understand diversification benefits. Assets with less-than-perfect positive correlation can reduce overall portfolio risk, depending on their weights and individual volatilities.
+**Interpretation:** Covariance captures how two return series move together in their original units. Correlation standardizes that relationship and lies between $-1$ and $+1$, when both series have nonzero variance.
 
 ### Portfolio Simple Return
 
@@ -426,7 +399,7 @@ $$
 **Equation**
 
 $$
-\operatorname{CAGR} = \left(\frac{V_{\mathrm{end}}}{V_{\mathrm{start}}}\right)^{1/Y}-1
+\mathrm{CAGR} = \left(\frac{V_{\mathrm{end}}}{V_{\mathrm{start}}}\right)^{1/Y}-1
 $$
 
 **Symbols**
@@ -436,7 +409,7 @@ $$
 | $V_{\mathrm{end}}$ | Portfolio value at the end of the period |
 | $V_{\mathrm{start}}$ | Portfolio value at the start of the period |
 | $Y$ | Length of the period in years |
-| $\operatorname{CAGR}$ | Compound annual growth rate |
+| $\mathrm{CAGR}$ | Compound annual growth rate |
 
 **Interpretation:** CAGR expresses the constant annual growth rate that connects the starting and ending values over the specified period. This is a reference formula; do not assume the Monte Carlo script reports CAGR unless the relevant output confirms it.
 
@@ -464,7 +437,7 @@ $$
 **Equation**
 
 $$
-\operatorname{Sharpe} = \frac{\bar R_p-R_f}{s_p}
+\mathrm{Sharpe} = \frac{\bar R_p-R_f}{s_p}
 $$
 
 **Symbols**
@@ -474,7 +447,7 @@ $$
 | $\bar R_p$ | Average portfolio return per period |
 | $R_f$ | Risk-free return for the same period and in compatible units |
 | $s_p$ | Standard deviation of portfolio returns for the same period |
-| $\operatorname{Sharpe}$ | Return in excess of the risk-free rate per unit of return standard deviation |
+| $\mathrm{Sharpe}$ | Return in excess of the risk-free rate per unit of return standard deviation |
 
 **Interpretation:** The Sharpe ratio compares excess return with variability. If the numerator uses daily returns and the denominator uses daily standard deviation, the result is a daily-period ratio; annualization requires consistent treatment of both quantities. This is a reference formula and should only be reported as a project result if it is calculated by the relevant script.
 
@@ -483,7 +456,7 @@ $$
 Let $L$ denote portfolio loss under a clearly specified loss convention. The loss quantile at confidence level $\alpha$ is
 
 $$
-\operatorname{VaR}_{\alpha}(L)=F_L^{-1}(\alpha)
+\mathrm{VaR}_{\alpha}(L)=F_L^{-1}(\alpha)
 $$
 
 where $F_L$ is the cumulative distribution function of loss.
@@ -493,7 +466,7 @@ where $F_L$ is the cumulative distribution function of loss.
 | Symbol | Meaning |
 |---|---|
 | $L$ | Portfolio loss, defined according to the report's convention |
-| $\operatorname{VaR}_{\alpha}(L)$ | Loss quantile at confidence level $\alpha$ |
+| $\mathrm{VaR}_{\alpha}(L)$ | Loss quantile at confidence level $\alpha$ |
 | $\alpha$ | Quantile level, such as $0.95$ or $0.99$ |
 | $F_L$ | Cumulative distribution function of loss |
 | $F_L^{-1}$ | Quantile function, or inverse CDF under the chosen convention |
@@ -505,17 +478,17 @@ where $F_L$ is the cumulative distribution function of loss.
 For a continuous loss distribution, Expected Shortfall at level $\alpha$ can be written as
 
 $$
-\operatorname{ES}_{\alpha}(L) = \mathbb{E}\left[L\mid L\geq \operatorname{VaR}_{\alpha}(L)\right].
+\mathrm{ES}_{\alpha}(L) = \mathbb{E}\left[L\mid L\geq \mathrm{VaR}_{\alpha}(L)\right].
 $$
 
 **Symbols**
 
 | Symbol | Meaning |
 |---|---|
-| $\operatorname{ES}_{\alpha}(L)$ | Expected Shortfall at level $\alpha$ |
+| $\mathrm{ES}_{\alpha}(L)$ | Expected Shortfall at level $\alpha$ |
 | $\mathbb{E}[\cdot]$ | Expected value or mean |
 | $L$ | Portfolio loss |
-| $\operatorname{VaR}_{\alpha}(L)$ | VaR threshold |
+| $\mathrm{VaR}_{\alpha}(L)$ | VaR threshold |
 | $\alpha$ | Confidence level |
 | $\mid$ | “Conditional on” |
 | $\geq$ | Greater than or equal to |
@@ -597,14 +570,14 @@ where $k$ is a sampled historical index shared by all assets in that vector.
 **Equation**
 
 $$
-\operatorname{QLIKE} = \frac{1}{T}\sum_{t=1}^{T} \left[ \ln(h_t)+\frac{y_t}{h_t} \right]
+\mathrm{QLIKE} = \frac{1}{T}\sum_{t=1}^{T} \left[ \ln(h_t)+\frac{y_t}{h_t} \right]
 $$
 
 **Symbols**
 
 | Symbol | Meaning |
 |---|---|
-| $\operatorname{QLIKE}$ | Average quasi-likelihood loss |
+| $\mathrm{QLIKE}$ | Average quasi-likelihood loss |
 | $T$ | Number of evaluated holdout observations |
 | $h_t$ | Positive forecast variance for observation $t$ |
 | $y_t$ | Nonnegative realized-variance proxy for observation $t$, such as squared return |
@@ -620,7 +593,7 @@ $$
 A useful comparison is the average QLIKE score for each model over the **same holdout dates and the same realized-variance proxy**:
 
 $$
-\Delta_{\mathrm{QLIKE}} = \operatorname{QLIKE}_{\mathrm{historical}} - \operatorname{QLIKE}_{\mathrm{GARCH}}.
+\Delta_{\mathrm{QLIKE}} = \mathrm{QLIKE}_{\mathrm{historical}} - \mathrm{QLIKE}_{\mathrm{GARCH}}.
 $$
 
 **Symbols**
@@ -628,8 +601,8 @@ $$
 | Symbol | Meaning |
 |---|---|
 | $\Delta_{\mathrm{QLIKE}}$ | Difference between the two models' QLIKE scores |
-| $\operatorname{QLIKE}_{\mathrm{historical}}$ | QLIKE of the expanding historical-variance baseline |
-| $\operatorname{QLIKE}_{\mathrm{GARCH}}$ | QLIKE of the GARCH model |
+| $\mathrm{QLIKE}_{\mathrm{historical}}$ | QLIKE of the expanding historical-variance baseline |
+| $\mathrm{QLIKE}_{\mathrm{GARCH}}$ | QLIKE of the GARCH model |
 | Positive $\Delta_{\mathrm{QLIKE}}$ | GARCH has the lower QLIKE score in this defined comparison |
 | Negative $\Delta_{\mathrm{QLIKE}}$ | Historical-variance baseline has the lower QLIKE score |
 
