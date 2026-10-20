@@ -10,6 +10,13 @@
 
 A Python-based portfolio risk analysis project that simulates possible future portfolio outcomes using Monte Carlo methods and compares a multivariate-normal return model with a GARCH(1,1) volatility model combined with joint residual bootstrap sampling.
 
+
+## Interactive Portfolio Risk Dashboard
+
+Explore interactive charts, model comparisons, datasets, and generated analysis reports.
+
+[Open the Dashboard](https://nasaamit005.github.io/monte-carlo-portfolio-risk-simulator/)
+
 **GitHub repository:** [Open the repository](https://github.com/nasaamit005/monte-carlo-portfolio-risk-simulator)
 
 > **Important:** Simulation results are scenario estimates, not predictions or guarantees. They depend on the selected assets, historical sample, assumptions, model specification, and random seed. This project is educational and is not investment advice.
