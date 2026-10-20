@@ -1,0 +1,36 @@
+{
+  "Simulation_Count": 10000,
+  "Horizon_Trading_Days": 252,
+  "Initial_Portfolio_Value": 10000.0,
+  "Portfolio_Construction": "Equal-weighted; daily rebalancing",
+  "Assets": "AAPL, AMZN, GOOGL, MSFT, NVDA",
+  "Random_Seed": 42,
+  "Historical_Return_Observations": 2513,
+  "Historical_Start_Date": "2016-10-17",
+  "Historical_End_Date": "2026-10-16",
+  "Mean_Terminal_Value": 13972.822994690006,
+  "Median_Terminal_Value": 13440.799269569165,
+  "5th_Percentile_Terminal_Value": 8547.08960262249,
+  "95th_Percentile_Terminal_Value": 21181.091122090023,
+  "Probability_Of_Loss_Percent": 14.45,
+  "Probability_Below_Initial_Value_Percent": 14.45,
+  "Worst_Simulated_Terminal_Value": 4975.86895176181,
+  "Best_Simulated_Terminal_Value": 37082.9338276622,
+  "Model": "Multivariate normal daily log-return model",
+  "Return_Estimation": "Historical sample mean and covariance",
+  "Portfolio_Weights": {
+    "AAPL": 0.2,
+    "AMZN": 0.2,
+    "GOOGL": 0.2,
+    "MSFT": 0.2,
+    "NVDA": 0.2
+  },
+  "Benchmark_Column_Detected": true,
+  "Limitations": [
+    "Assumes historical mean and covariance remain representative.",
+    "Does not explicitly model fat tails or changing volatility.",
+    "Does not include transaction costs, taxes, or slippage.",
+    "Assumes daily rebalancing to equal weights.",
+    "Monte Carlo results are model-based scenarios, not forecasts."
+  ]
+}
