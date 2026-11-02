@@ -804,3 +804,13 @@ Test counts can change as the project evolves. Re-run pytest to confirm the stat
 This project demonstrates applied Python, financial return analysis, Monte Carlo simulation, volatility modelling, model validation, automated testing, and interactive reporting. In interviews, describe the methods you implemented, the assumptions you tested, the actual outputs you measured, and the limitations you identified.
 
 **Disclaimer:** For educational and portfolio-demonstration purposes only. Nothing in this repository constitutes investment, trading, tax, or legal advice.
+
+## Mathematical Reference
+
+- [Read online (rendered equations)](docs/Mathematical_Equations.md)
+- [Download as PDF](docs/Mathematical_Equations.pdf)
+
+## Mathematical Reference
+
+- [Read online (rendered equations)](docs/Mathematical_Equations.md)
+- [Download as PDF](docs/Mathematical_Equations.pdf)
